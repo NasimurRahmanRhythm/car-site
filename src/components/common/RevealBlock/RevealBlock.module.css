@@ -1,0 +1,3 @@
+.block {
+  will-change: transform, clip-path;
+}

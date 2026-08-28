@@ -1,0 +1,1 @@
+export { MarqueeStrip } from "./MarqueeStrip";

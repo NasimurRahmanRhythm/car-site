@@ -1,0 +1,1 @@
+export { InventorySearch } from "./InventorySearch";

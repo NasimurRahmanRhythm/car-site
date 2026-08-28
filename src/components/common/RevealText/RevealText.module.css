@@ -1,0 +1,23 @@
+.wrapper {
+  display: contents;
+}
+
+.lineMask {
+  overflow: hidden;
+  display: block;
+}
+
+.line {
+  display: block;
+  will-change: transform;
+  /* Hidden from first paint (SSR + pre-hydration) so the GSAP reveal has
+     something to visibly animate from, instead of JS "catching up" to
+     text that was already visible in its final position. */
+  transform: translateY(110%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line {
+    transform: none;
+  }
+}

@@ -1,0 +1,13 @@
+.hero {
+  padding-block: var(--space-16) var(--space-10);
+}
+
+.heading {
+  max-width: 24ch;
+  margin-top: var(--space-4);
+}
+
+.intro {
+  max-width: 60ch;
+  margin-top: var(--space-6);
+}

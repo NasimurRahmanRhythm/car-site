@@ -1,0 +1,71 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-4);
+}
+
+.imageCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.imageWrap {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-black-elevated);
+  border: 2px solid transparent;
+}
+
+.coverImage {
+  border-color: var(--color-accent);
+}
+
+.coverBadge {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 1;
+}
+
+.cardActions {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+}
+
+.actionButton {
+  color: var(--color-white-muted);
+}
+
+.actionButton:hover {
+  color: var(--color-white);
+}
+
+.deleteAction:hover {
+  color: var(--color-danger);
+}
+
+.uploadForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px dashed var(--color-line-strong);
+  border-radius: var(--radius-md);
+}
+
+.fileInput {
+  color: var(--color-white-muted);
+  font-size: var(--text-sm);
+}

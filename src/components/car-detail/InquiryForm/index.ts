@@ -1,0 +1,1 @@
+export { InquiryForm } from "./InquiryForm";

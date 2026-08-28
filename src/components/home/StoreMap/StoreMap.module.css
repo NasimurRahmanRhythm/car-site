@@ -1,0 +1,92 @@
+.section {
+  padding-block: var(--space-16);
+  scroll-margin-top: var(--nav-height);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-8);
+}
+
+.mapShell {
+  height: 480px;
+  width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-line-strong);
+  background: var(--color-black-soft);
+}
+
+.fallback {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white-muted);
+  font-size: var(--text-sm);
+}
+
+.map {
+  height: 100%;
+  width: 100%;
+  background: var(--color-black-soft);
+}
+
+/* OpenStreetMap ships light tiles only. Inverting + rotating the hue turns
+   them dark while keeping road/water colours plausible; desaturating pulls
+   them back toward the site's monochrome palette. Scoped to the tile pane so
+   markers, popups and controls keep their real colours. */
+.map :global(.leaflet-tile-pane) {
+  filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.9) saturate(0.35);
+}
+
+.marker {
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: 3px solid var(--color-white);
+  box-shadow: 0 0 0 4px rgba(176, 141, 87, 0.3);
+}
+
+.map :global(.leaflet-control-zoom a) {
+  background: var(--color-black-elevated);
+  border-color: var(--color-line-strong);
+  color: var(--color-white);
+}
+
+.map :global(.leaflet-control-zoom a:hover) {
+  background: var(--color-black-soft);
+  color: var(--color-accent);
+}
+
+/* OSM's tile usage policy requires visible attribution — keep it, but tone
+   it down so it doesn't fight the section. */
+.map :global(.leaflet-control-attribution) {
+  background: rgba(11, 11, 11, 0.7);
+  color: var(--color-white-muted);
+  font-size: 10px;
+}
+
+.map :global(.leaflet-control-attribution a) {
+  color: var(--color-white-muted);
+}
+
+.map :global(.leaflet-popup-content-wrapper),
+.map :global(.leaflet-popup-tip) {
+  background: var(--color-black-elevated);
+  color: var(--color-white);
+  border: 1px solid var(--color-line-strong);
+}
+
+.popup {
+  font-family: var(--font-body);
+  color: var(--color-white);
+}
+
+.popupTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-1);
+  color: var(--color-white);
+}
