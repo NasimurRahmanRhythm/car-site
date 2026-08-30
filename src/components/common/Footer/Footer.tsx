@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/common/Container";
+import { Logo } from "@/components/common/Logo";
 import { NAV_LINKS } from "@/data/navigation";
 import { CATEGORIES } from "@/lib/constants";
 import { SITE } from "@/data/site";
@@ -13,7 +14,7 @@ export function Footer() {
       <Container>
         <div className={styles.grid}>
           <div className={styles.brandCol}>
-            <span className={styles.logo}>{SITE.shortName}</span>
+            <Logo className={styles.logo} />
             <p className={styles.blurb}>{SITE.tagline}</p>
             <div className={styles.social}>
               <a

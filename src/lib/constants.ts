@@ -34,3 +34,9 @@ export const NAV_HEIGHT_PX = 64;
 export const MAX_COMPARE = 4;
 export const COMPARE_STORAGE_KEY = "car-site:compare";
 export const PAGE_SIZE = 9;
+
+export const APPOINTMENT_STATUS_LABELS: Record<string, string> = {
+  pending: "Pending",
+  confirmed: "Confirmed",
+  cancelled: "Cancelled",
+};

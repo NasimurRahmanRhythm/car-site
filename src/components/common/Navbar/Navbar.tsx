@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { NavDropdown } from "@/components/common/NavDropdown";
 import { MobileMenu } from "@/components/common/MobileMenu";
+import { Logo } from "@/components/common/Logo";
 import { NAV_LINKS } from "@/data/navigation";
 import { SITE } from "@/data/site";
 import { NAV_HEIGHT_PX } from "@/lib/constants";
@@ -50,8 +51,8 @@ export function Navbar() {
   return (
     <header className={cn(styles.navbar, scrolled && styles.scrolled)}>
       <div className={styles.inner}>
-        <Link href="/" className={styles.logo}>
-          {SITE.shortName}
+        <Link href="/" className={styles.logo} aria-label={SITE.name}>
+          <Logo priority />
         </Link>
 
         <nav className={styles.links}>

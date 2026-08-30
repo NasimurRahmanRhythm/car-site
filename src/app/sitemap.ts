@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getAllCarSlugs } from "@/lib/services/car.service";
+import { getAllNewsSlugs } from "@/lib/services/news.service";
 import { CATEGORIES } from "@/lib/constants";
 import { getSiteUrl } from "@/lib/site-url";
 
@@ -10,7 +11,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "",
     "/inventory",
     "/about-us",
-    "/governing-body",
+    "/news",
+    "/gallery",
+    "/book-appointment",
     "/contact-us",
     "/360-view",
   ].map((path) => ({
@@ -23,11 +26,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(),
   }));
 
-  const carSlugs = await getAllCarSlugs();
+  const [carSlugs, newsSlugs] = await Promise.all([getAllCarSlugs(), getAllNewsSlugs()]);
+
   const carRoutes: MetadataRoute.Sitemap = carSlugs.map((car) => ({
     url: `${baseUrl}/inventory/${car.slug}`,
     lastModified: new Date(car.updated_at),
   }));
 
-  return [...staticRoutes, ...categoryRoutes, ...carRoutes];
+  const newsRoutes: MetadataRoute.Sitemap = newsSlugs.map((post) => ({
+    url: `${baseUrl}/news/${post.slug}`,
+    lastModified: new Date(post.updated_at),
+  }));
+
+  return [...staticRoutes, ...categoryRoutes, ...carRoutes, ...newsRoutes];
 }

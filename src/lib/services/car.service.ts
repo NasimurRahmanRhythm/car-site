@@ -174,3 +174,54 @@ export async function getFilterOptions(): Promise<FilterOptions> {
     },
   };
 }
+
+export interface GalleryImage {
+  id: string;
+  url: string;
+  alt: string | null;
+  car: { slug: string; year: number; make: string; model: string } | null;
+}
+
+/** How many rows to pull before shuffling — a cap so the query stays cheap. */
+const GALLERY_POOL = 300;
+
+/**
+ * A shuffled sample of every photo attached to a vehicle in the collection.
+ * PostgREST cannot order randomly, so the pool is drawn newest-first and
+ * shuffled here.
+ */
+export async function getGalleryImages(limit = 60): Promise<GalleryImage[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("car_images")
+    .select("id, url, alt, cars(slug, year, make, model)")
+    .order("created_at", { ascending: false })
+    .limit(GALLERY_POOL);
+
+  if (error) {
+    console.error("getGalleryImages failed:", error.message);
+    return [];
+  }
+
+  const rows = (data ?? []) as unknown as {
+    id: string;
+    url: string;
+    alt: string | null;
+    cars: GalleryImage["car"];
+  }[];
+
+  const pool = rows.map((row) => ({
+    id: row.id,
+    url: row.url,
+    alt: row.alt,
+    car: row.cars,
+  }));
+
+  // Fisher-Yates on a copy — the order changes on every request.
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+
+  return pool.slice(0, limit);
+}

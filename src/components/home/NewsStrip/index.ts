@@ -1,0 +1,1 @@
+export { NewsStrip } from "./NewsStrip";

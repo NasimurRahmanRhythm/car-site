@@ -1,0 +1,46 @@
+.section {
+  padding-block: var(--space-12);
+}
+
+.viewport {
+  overflow: hidden;
+  margin-top: var(--space-8);
+  padding-inline: var(--container-padding);
+}
+
+.track {
+  display: flex;
+  align-items: stretch;
+  width: max-content;
+  will-change: transform;
+}
+
+/* Spacing lives on the slide, not as a track `gap`: the trailing margin keeps
+   both runs exactly the same width, which is what makes -50% seamless. */
+.slide {
+  width: 320px;
+  flex-shrink: 0;
+  margin-right: var(--space-6);
+  display: flex;
+}
+
+.slide > * {
+  width: 100%;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .slide {
+    width: 380px;
+  }
+}
+
+.single {
+  max-width: 480px;
+  margin: var(--space-8) auto 0;
+}

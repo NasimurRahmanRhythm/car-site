@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { slugify } from "@/lib/utils";
 import type { Database } from "@/types/database";
 import type { CarWithImages } from "@/types/car";
+import type { NewsPost } from "@/types/news";
+import type { Appointment, AppointmentStatus } from "@/types/appointment";
 
 export type CarInput = Database["public"]["Tables"]["cars"]["Insert"];
 export type CarUpdate = Database["public"]["Tables"]["cars"]["Update"];
@@ -194,6 +196,217 @@ export async function setCoverImage(
 
   if (error) {
     console.error("setCoverImage failed:", error.message);
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}
+
+/* ------------------------------------------------------------------ News */
+
+const NEWS_IMAGES_BUCKET = "news-images";
+
+export type NewsInput = Database["public"]["Tables"]["news"]["Insert"];
+
+export async function getAllNewsForAdmin(): Promise<NewsPost[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("news")
+    .select("*")
+    .order("published_at", { ascending: false });
+
+  if (error) {
+    console.error("getAllNewsForAdmin failed:", error.message);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+export async function getNewsForAdmin(id: string): Promise<NewsPost | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("news")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("getNewsForAdmin failed:", error.message);
+    return null;
+  }
+
+  return data;
+}
+
+async function uniqueNewsSlug(base: string, excludeId?: string): Promise<string> {
+  const supabase = await createClient();
+  const root = slugify(base) || "news";
+  let candidate = root;
+  let suffix = 2;
+
+  for (;;) {
+    let query = supabase.from("news").select("id").eq("slug", candidate);
+    if (excludeId) query = query.neq("id", excludeId);
+    const { data } = await query.maybeSingle();
+    if (!data) return candidate;
+    candidate = `${root}-${suffix}`;
+    suffix += 1;
+  }
+}
+
+type NewsImageUpload =
+  | { url: string; path: string; error?: never }
+  | { url: null; path: null; error: string };
+
+async function uploadNewsImage(file: File): Promise<NewsImageUpload> {
+  const supabase = await createClient();
+  const extension = file.name.split(".").pop() || "jpg";
+  const storagePath = `${crypto.randomUUID()}.${extension}`;
+
+  const { error } = await supabase.storage
+    .from(NEWS_IMAGES_BUCKET)
+    .upload(storagePath, file, { contentType: file.type, upsert: false });
+
+  if (error) {
+    console.error("uploadNewsImage failed:", error.message);
+    return { url: null, path: null, error: error.message };
+  }
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(NEWS_IMAGES_BUCKET).getPublicUrl(storagePath);
+
+  return { url: publicUrl, path: storagePath };
+}
+
+async function removeNewsImage(storagePath: string | null): Promise<void> {
+  if (!storagePath) return;
+  const supabase = await createClient();
+  await supabase.storage.from(NEWS_IMAGES_BUCKET).remove([storagePath]);
+}
+
+export async function createNews(
+  input: Omit<NewsInput, "slug">,
+  image?: File | null
+): Promise<{ post: NewsPost | null; error?: string }> {
+  const supabase = await createClient();
+  const slug = await uniqueNewsSlug(input.title);
+
+  let imageFields: Pick<NewsInput, "image_url" | "image_path"> = {};
+  if (image) {
+    const uploaded = await uploadNewsImage(image);
+    if (!uploaded.url) return { post: null, error: uploaded.error };
+    imageFields = { image_url: uploaded.url, image_path: uploaded.path };
+  }
+
+  const { data, error } = await supabase
+    .from("news")
+    .insert({ ...input, ...imageFields, slug })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("createNews failed:", error.message);
+    await removeNewsImage(imageFields.image_path ?? null);
+    return { post: null, error: error.message };
+  }
+
+  return { post: data };
+}
+
+export async function updateNews(
+  id: string,
+  input: Omit<NewsInput, "slug">,
+  image?: File | null
+): Promise<{ post: NewsPost | null; error?: string }> {
+  const supabase = await createClient();
+  const existing = await getNewsForAdmin(id);
+  if (!existing) return { post: null, error: "Post not found." };
+
+  const slug = await uniqueNewsSlug(input.title, id);
+
+  let imageFields: Pick<NewsInput, "image_url" | "image_path"> = {};
+  if (image) {
+    const uploaded = await uploadNewsImage(image);
+    if (!uploaded.url) return { post: null, error: uploaded.error };
+    imageFields = { image_url: uploaded.url, image_path: uploaded.path };
+  }
+
+  const { data, error } = await supabase
+    .from("news")
+    .update({ ...input, ...imageFields, slug })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("updateNews failed:", error.message);
+    await removeNewsImage(imageFields.image_path ?? null);
+    return { post: null, error: error.message };
+  }
+
+  // Only drop the old file once the row is safely pointing at the new one.
+  if (image) await removeNewsImage(existing.image_path);
+
+  return { post: data };
+}
+
+export async function deleteNews(id: string): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
+  const existing = await getNewsForAdmin(id);
+
+  const { error } = await supabase.from("news").delete().eq("id", id);
+
+  if (error) {
+    console.error("deleteNews failed:", error.message);
+    return { success: false, error: error.message };
+  }
+
+  await removeNewsImage(existing?.image_path ?? null);
+  return { success: true };
+}
+
+/* ---------------------------------------------------------- Appointments */
+
+export async function getAllAppointments(): Promise<Appointment[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("appointments")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("getAllAppointments failed:", error.message);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+export async function setAppointmentStatus(
+  id: string,
+  status: AppointmentStatus
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
+  const { error } = await supabase.from("appointments").update({ status }).eq("id", id);
+
+  if (error) {
+    console.error("setAppointmentStatus failed:", error.message);
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}
+
+export async function deleteAppointment(
+  id: string
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
+  const { error } = await supabase.from("appointments").delete().eq("id", id);
+
+  if (error) {
+    console.error("deleteAppointment failed:", error.message);
     return { success: false, error: error.message };
   }
 

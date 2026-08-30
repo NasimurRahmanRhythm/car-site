@@ -55,17 +55,23 @@
   color: var(--color-danger);
 }
 
+/* The dropzone brings its own dashed frame, so the form is just a stack. */
 .uploadForm {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: var(--space-4);
-  padding: var(--space-5);
-  border: 1px dashed var(--color-line-strong);
-  border-radius: var(--radius-md);
 }
 
-.fileInput {
-  color: var(--color-white-muted);
+
+.feedback {
   font-size: var(--text-sm);
+}
+
+.success {
+  color: var(--color-success);
+}
+
+.error {
+  color: var(--color-danger);
 }

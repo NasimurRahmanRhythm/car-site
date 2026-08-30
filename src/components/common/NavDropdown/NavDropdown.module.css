@@ -29,5 +29,5 @@
 
 .item:hover {
   color: var(--color-white);
-  background: rgba(245, 243, 240, 0.06);
+  background: rgba(244, 244, 245, 0.06);
 }

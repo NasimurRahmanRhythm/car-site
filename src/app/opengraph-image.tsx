@@ -16,7 +16,7 @@ export default function OpengraphImage() {
           alignItems: "center",
           justifyContent: "center",
           background: "#0b0b0b",
-          color: "#f5f3f0",
+          color: "#f4f4f5",
         }}
       >
         <div
@@ -24,7 +24,7 @@ export default function OpengraphImage() {
             fontSize: 30,
             letterSpacing: 8,
             textTransform: "uppercase",
-            color: "#b08d57",
+            color: "#ea2b33",
             marginBottom: 24,
           }}
         >

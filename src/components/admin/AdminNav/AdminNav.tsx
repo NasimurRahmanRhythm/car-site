@@ -11,6 +11,15 @@ export function AdminNav() {
       </Link>
 
       <div className={styles.links}>
+        <Link href="/admin" className={styles.link}>
+          Inventory
+        </Link>
+        <Link href="/admin/news" className={styles.link}>
+          News
+        </Link>
+        <Link href="/admin/appointments" className={styles.link}>
+          Appointments
+        </Link>
         <Link href="/admin/cars/new" className={styles.link}>
           Add Vehicle
         </Link>

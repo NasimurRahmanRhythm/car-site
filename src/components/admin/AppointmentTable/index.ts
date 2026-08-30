@@ -1,0 +1,1 @@
+export { AppointmentTable } from "./AppointmentTable";

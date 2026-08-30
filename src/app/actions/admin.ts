@@ -96,14 +96,44 @@ export async function deleteCarAction(carId: string): Promise<void> {
   redirect("/admin");
 }
 
-export async function uploadImagesAction(carId: string, formData: FormData): Promise<void> {
-  const files = formData.getAll("files").filter((entry): entry is File => entry instanceof File && entry.size > 0);
+export interface UploadImagesState {
+  uploaded: number;
+  error?: string;
+  /** Changes on every run, which is what lets the form reset its dropzone. */
+  completedAt: number;
+}
+
+export async function uploadImagesAction(
+  carId: string,
+  _prevState: UploadImagesState | null,
+  formData: FormData
+): Promise<UploadImagesState> {
+  const files = formData
+    .getAll("files")
+    .filter((entry): entry is File => entry instanceof File && entry.size > 0);
+
+  if (files.length === 0) {
+    return { uploaded: 0, error: "Choose at least one image first.", completedAt: Date.now() };
+  }
+
+  // Storage rejections used to pass silently, which looked exactly like a
+  // successful upload that never appeared — report what actually happened.
+  let uploaded = 0;
+  const failures: string[] = [];
 
   for (const file of files) {
-    await uploadCarImage(carId, file);
+    const { error } = await uploadCarImage(carId, file);
+    if (error) failures.push(`${file.name} — ${error}`);
+    else uploaded += 1;
   }
 
   revalidateEverywhere(carId);
+
+  return {
+    uploaded,
+    error: failures.length > 0 ? failures.join(" · ") : undefined,
+    completedAt: Date.now(),
+  };
 }
 
 export async function deleteImageAction(

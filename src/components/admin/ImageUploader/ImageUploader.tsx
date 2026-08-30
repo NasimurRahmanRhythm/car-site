@@ -1,15 +1,12 @@
 import Image from "next/image";
-import { uploadImagesAction } from "@/app/actions/admin";
 import { Badge } from "@/components/common/Badge";
-import { SubmitButton } from "@/components/common/SubmitButton";
 import { cn } from "@/lib/utils";
 import type { CarImage } from "@/types/car";
 import { ImageActions } from "./ImageActions";
+import { UploadImagesForm } from "./UploadImagesForm";
 import styles from "./ImageUploader.module.css";
 
 export function ImageUploader({ carId, images }: { carId: string; images: CarImage[] }) {
-  const uploadAction = uploadImagesAction.bind(null, carId);
-
   return (
     <div className={styles.wrapper}>
       {images.length > 0 && (
@@ -41,17 +38,7 @@ export function ImageUploader({ carId, images }: { carId: string; images: CarIma
         </div>
       )}
 
-      <form action={uploadAction} className={styles.uploadForm}>
-        <input
-          type="file"
-          name="files"
-          accept="image/*"
-          multiple
-          required
-          className={styles.fileInput}
-        />
-        <SubmitButton label="Upload Images" />
-      </form>
+      <UploadImagesForm carId={carId} />
     </div>
   );
 }

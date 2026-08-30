@@ -31,3 +31,20 @@ export function carDisplayName(car: {
 }): string {
   return [car.year, car.make, car.model, car.trim].filter(Boolean).join(" ");
 }
+
+export function formatDate(value: string): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(value));
+}
+
+/** Trims a news body down to a card-sized teaser without cutting mid-word. */
+export function excerpt(value: string, maxLength = 140): string {
+  const collapsed = value.replace(/\s+/g, " ").trim();
+  if (collapsed.length <= maxLength) return collapsed;
+  const clipped = collapsed.slice(0, maxLength);
+  const lastSpace = clipped.lastIndexOf(" ");
+  return `${clipped.slice(0, lastSpace > 0 ? lastSpace : maxLength)}…`;
+}

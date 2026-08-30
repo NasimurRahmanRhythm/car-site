@@ -46,7 +46,7 @@
   border-radius: 50%;
   background: var(--color-accent);
   border: 3px solid var(--color-white);
-  box-shadow: 0 0 0 4px rgba(176, 141, 87, 0.3);
+  box-shadow: 0 0 0 4px rgba(234, 43, 51, 0.3);
 }
 
 .map :global(.leaflet-control-zoom a) {

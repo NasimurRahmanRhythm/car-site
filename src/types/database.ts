@@ -1,5 +1,7 @@
 export type CarStatus = "available" | "reserved" | "sold";
 
+export type AppointmentStatus = "pending" | "confirmed" | "cancelled";
+
 export type CarCategory =
   | "upcoming_units"
   | "port_units"
@@ -164,6 +166,78 @@ export interface Database {
             referencedColumns: ["id"];
           },
         ];
+      };
+      news: {
+        Row: {
+          id: string;
+          slug: string;
+          title: string;
+          description: string;
+          image_url: string | null;
+          image_path: string | null;
+          published_at: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          slug: string;
+          title: string;
+          description?: string;
+          image_url?: string | null;
+          image_path?: string | null;
+          published_at?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          slug?: string;
+          title?: string;
+          description?: string;
+          image_url?: string | null;
+          image_path?: string | null;
+          published_at?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      appointments: {
+        Row: {
+          id: string;
+          name: string;
+          email: string;
+          phone: string | null;
+          preferred_date: string | null;
+          preferred_time: string | null;
+          message: string | null;
+          status: AppointmentStatus;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          email: string;
+          phone?: string | null;
+          preferred_date?: string | null;
+          preferred_time?: string | null;
+          message?: string | null;
+          status?: AppointmentStatus;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          email?: string;
+          phone?: string | null;
+          preferred_date?: string | null;
+          preferred_time?: string | null;
+          message?: string | null;
+          status?: AppointmentStatus;
+          created_at?: string;
+        };
+        Relationships: [];
       };
       inquiries: {
         Row: {

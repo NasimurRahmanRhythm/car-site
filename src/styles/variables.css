@@ -3,14 +3,13 @@
   --color-black: #0b0b0b;
   --color-black-soft: #141414;
   --color-black-elevated: #1c1c1c;
-  --color-white: #f5f3f0;
-  --color-white-muted: #cfccc5;
-  --color-line: rgba(245, 243, 240, 0.12);
-  --color-line-strong: rgba(245, 243, 240, 0.24);
-  --color-accent: #b08d57;
-  --color-accent-soft: rgba(176, 141, 87, 0.16);
+  --color-white: #f4f4f5;
+  --color-white-muted: #c8c8ca;
+  --color-line: rgba(244, 244, 245, 0.12);
+  --color-line-strong: rgba(244, 244, 245, 0.24);
+  --color-accent: #ea2b33;
+  --color-accent-soft: rgba(234, 43, 51, 0.16);
   --color-success: #6b8f71;
-  --color-warning: #c9a24b;
   --color-danger: #b0574f;
   --color-overlay: rgba(11, 11, 11, 0.6);
 
