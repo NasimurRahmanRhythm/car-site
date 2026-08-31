@@ -5,28 +5,14 @@ import gsap from "gsap";
 import { Logo } from "@/components/common/Logo";
 import styles from "./MarqueeStrip.module.css";
 
-/** A wordmark is dropped in after every this-many brand names. */
-const LOGO_EVERY = 3;
+/** Enough wordmarks that one run is wider than any realistic viewport. */
+const MARKS_PER_RUN = 14;
 
-type Entry = { kind: "text"; value: string } | { kind: "logo" };
+/** Seconds each wordmark takes to cross the strip. */
+const SECONDS_PER_MARK = 4;
 
-function buildSequence(items: string[]): Entry[] {
-  const sequence: Entry[] = [];
-
-  items.forEach((item, index) => {
-    sequence.push({ kind: "text", value: item });
-    if ((index + 1) % LOGO_EVERY === 0) sequence.push({ kind: "logo" });
-  });
-
-  // Guarantees the wordmark shows up even for a very short brand list.
-  if (sequence.at(-1)?.kind !== "logo") sequence.push({ kind: "logo" });
-
-  return sequence;
-}
-
-export function MarqueeStrip({ items }: { items: string[] }) {
+export function MarqueeStrip() {
   const trackRef = useRef<HTMLDivElement>(null);
-  const sequence = buildSequence(items);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -34,13 +20,13 @@ export function MarqueeStrip({ items }: { items: string[] }) {
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    // The track renders the sequence twice and every entry carries its own
-    // trailing margin, so both runs are exactly the same width and -50% lands
-    // on the identical copy with no visible seam.
+    // The track renders the run twice and every item carries its own trailing
+    // margin, so both runs are exactly the same width and -50% lands on the
+    // identical copy with no visible seam.
     const ctx = gsap.context(() => {
       gsap.to(track, {
         xPercent: -50,
-        duration: 28,
+        duration: MARKS_PER_RUN * SECONDS_PER_MARK,
         ease: "none",
         repeat: -1,
       });
@@ -49,21 +35,14 @@ export function MarqueeStrip({ items }: { items: string[] }) {
     return () => ctx.revert();
   }, []);
 
-  const doubled = [...sequence, ...sequence];
+  const marks = Array.from({ length: MARKS_PER_RUN * 2 }, (_, index) => index);
 
   return (
     <div className={styles.strip} aria-hidden="true">
       <div ref={trackRef} className={styles.track}>
-        {doubled.map((entry, index) => (
-          <span
-            key={`${entry.kind}-${entry.kind === "text" ? entry.value : ""}-${index}`}
-            className={styles.item}
-          >
-            {entry.kind === "text" ? (
-              entry.value
-            ) : (
-              <Logo className={styles.logoMark} />
-            )}
+        {marks.map((index) => (
+          <span key={index} className={styles.item}>
+            <Logo className={styles.logoMark} />
             <span className={styles.dot} />
           </span>
         ))}

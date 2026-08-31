@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { signOutAction } from "@/app/actions/auth";
+import { getPendingAppointmentCount } from "@/lib/services/admin.service";
 import { SITE } from "@/data/site";
+import { AppointmentsLink } from "./AppointmentsLink";
 import styles from "./AdminNav.module.css";
 
-export function AdminNav() {
+export async function AdminNav() {
+  const pendingAppointments = await getPendingAppointmentCount();
+
   return (
     <nav className={styles.nav}>
       <Link href="/admin" className={styles.logo}>
@@ -17,9 +21,7 @@ export function AdminNav() {
         <Link href="/admin/news" className={styles.link}>
           News
         </Link>
-        <Link href="/admin/appointments" className={styles.link}>
-          Appointments
-        </Link>
+        <AppointmentsLink initialCount={pendingAppointments} />
         <Link href="/admin/cars/new" className={styles.link}>
           Add Vehicle
         </Link>

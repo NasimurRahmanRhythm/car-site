@@ -17,9 +17,16 @@ export async function isEmailAllowed(email: string): Promise<boolean> {
   return Boolean(data);
 }
 
-export async function sendMagicLink(
-  email: string,
-  redirectTo: string
+/**
+ * Emails a six-digit sign-in code to a whitelisted admin.
+ *
+ * The same `signInWithOtp` call backs both magic links and codes — Supabase
+ * always generates both, and the email template alone decides which one the
+ * recipient sees. No `emailRedirectTo` here: with a code there is nothing to
+ * redirect to.
+ */
+export async function sendLoginCode(
+  email: string
 ): Promise<{ success: boolean; error?: string }> {
   const normalizedEmail = email.toLowerCase().trim();
   const allowed = await isEmailAllowed(normalizedEmail);
@@ -35,13 +42,67 @@ export async function sendMagicLink(
       // Safe to auto-create: isEmailAllowed() above already gated this to
       // whitelisted admin emails only — no other email reaches this call.
       shouldCreateUser: true,
-      emailRedirectTo: redirectTo,
     },
   });
 
   if (error) {
-    console.error("sendMagicLink failed:", error.message);
-    return { success: false, error: "Could not send the login link. Please try again." };
+    console.error("sendLoginCode failed:", error.message);
+    return { success: false, error: "Could not send the login code. Please try again." };
+  }
+
+  return { success: true };
+}
+
+/**
+ * Exchanges a six-digit code for a session.
+ *
+ * `type` differs by account age: an existing user verifies as `email`, while an
+ * admin signing in for the very first time is still in GoTrue's signup flow and
+ * needs `signup`. Trying `email` first and falling back covers both without the
+ * caller having to know which case it is.
+ */
+export async function verifyLoginCode(
+  email: string,
+  token: string
+): Promise<{ success: boolean; error?: string }> {
+  const normalizedEmail = email.toLowerCase().trim();
+  const normalizedToken = token.replace(/\D/g, "");
+
+  if (normalizedToken.length !== 6) {
+    return { success: false, error: "Enter the 6-digit code from your email." };
+  }
+
+  // Re-checked after the send step on purpose: the two calls are separate
+  // requests, and an email removed from the whitelist in between must not still
+  // be able to trade a valid code for a session.
+  const allowed = await isEmailAllowed(normalizedEmail);
+  if (!allowed) {
+    return { success: false, error: "This email is not registered as an admin." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.verifyOtp({
+    email: normalizedEmail,
+    token: normalizedToken,
+    type: "email",
+  });
+
+  if (error) {
+    const { error: signupError } = await supabase.auth.verifyOtp({
+      email: normalizedEmail,
+      token: normalizedToken,
+      type: "signup",
+    });
+
+    if (signupError) {
+      // Supabase's own wording leaks flow details; the user only needs to know
+      // the code did not work.
+      console.error("verifyLoginCode failed:", signupError.message);
+      return {
+        success: false,
+        error: "That code is invalid or has expired. Request a new one.",
+      };
+    }
   }
 
   return { success: true };

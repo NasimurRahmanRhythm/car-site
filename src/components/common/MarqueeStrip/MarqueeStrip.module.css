@@ -11,31 +11,19 @@
   will-change: transform;
 }
 
-/* The spacing between entries is a trailing margin rather than a track `gap`,
+/* The spacing between marks is a trailing margin rather than a track `gap`,
    so both runs measure the same and the -50% loop has no seam. */
 .item {
   display: inline-flex;
   align-items: center;
   gap: var(--space-8);
   margin-right: var(--space-8);
-  font-family: var(--font-display);
-  font-size: var(--text-2xl);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--color-white-muted);
-  opacity: 0.55;
-  transition: opacity var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out);
-}
-
-.item:hover {
-  opacity: 1;
-  color: var(--color-accent);
+  opacity: 0.7;
 }
 
 /* Two classes so this wins over the Logo module's own height. */
 .item .logoMark {
-  height: 2.25rem;
+  height: 2rem;
   width: auto;
 }
 
@@ -45,4 +33,10 @@
   border-radius: 50%;
   background: var(--color-accent);
   flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .item .logoMark {
+    height: 2.75rem;
+  }
 }

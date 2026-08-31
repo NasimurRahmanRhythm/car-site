@@ -72,3 +72,45 @@
 .error {
   color: var(--color-danger);
 }
+
+/* Neutral, not alarming: being signed out after 14 days is expected behaviour,
+   not something the admin did wrong. */
+.info {
+  color: var(--color-white-muted);
+}
+
+/* Wide tracking makes six digits readable as three pairs at a glance. */
+.codeInput {
+  text-align: center;
+  font-size: var(--text-xl);
+  letter-spacing: 0.5em;
+  /* Offsets the trailing letter-space so the digits sit optically centred. */
+  text-indent: 0.5em;
+}
+
+.secondaryActions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.linkButton {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-white-muted);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.linkButton:hover:not(:disabled) {
+  color: var(--color-white);
+}
+
+.linkButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

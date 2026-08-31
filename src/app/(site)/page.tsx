@@ -17,17 +17,12 @@ export default async function HomePage() {
     getLatestNews(5),
   ]);
 
-  const marqueeItems =
-    filterOptions.makes.length > 0
-      ? filterOptions.makes
-      : ["Rolls-Royce", "Ferrari", "Lamborghini", "Bentley", "McLaren", "Porsche"];
-
   return (
     <>
       <HeroVideo />
       <InventorySearch makes={filterOptions.makes} />
       <FeaturedCars cars={featuredCars} />
-      <MarqueeStrip items={marqueeItems} />
+      <MarqueeStrip />
       <BrandStatement />
       <CategoryStrip />
       <NewsStrip posts={latestNews} />

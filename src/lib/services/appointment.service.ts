@@ -1,4 +1,6 @@
+import { after } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { sendAppointmentReceiptEmail } from "@/lib/email/appointment-notifications";
 
 export interface AppointmentInput {
   name: string;
@@ -29,6 +31,20 @@ export async function submitAppointment(
       error: "Could not book your appointment. Please try again.",
     };
   }
+
+  // After the response, not before: the request is already saved and visible in
+  // the admin panel, so a round-trip to Resend should not sit between the
+  // visitor and their confirmation screen.
+  after(async () => {
+    await sendAppointmentReceiptEmail({
+      name: input.name,
+      email: input.email,
+      phone: input.phone,
+      preferredDate: input.preferredDate,
+      preferredTime: input.preferredTime,
+      message: input.message,
+    });
+  });
 
   return { success: true };
 }

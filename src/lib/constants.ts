@@ -40,3 +40,11 @@ export const APPOINTMENT_STATUS_LABELS: Record<string, string> = {
   confirmed: "Confirmed",
   cancelled: "Cancelled",
 };
+
+/**
+ * How long an admin stays signed in before a fresh sign-in code is required.
+ * Enforced in `src/lib/supabase/middleware.ts`; mirror this in the Supabase
+ * dashboard under Authentication → Sessions → Time-box user sessions.
+ */
+export const SESSION_MAX_AGE_DAYS = 14;
+export const SESSION_MAX_AGE_MS = SESSION_MAX_AGE_DAYS * 24 * 60 * 60 * 1000;

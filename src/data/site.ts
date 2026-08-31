@@ -7,7 +7,7 @@ export const SITE = {
   // country code; `phoneDisplay` is the human-readable version.
   phone: "+8801700000000",
   phoneDisplay: "+880 1700-000000",
-  email: "info@vipmotors.com",
+  email: "info@vipmotorsbd.com",
   address: "Gulshan 1, Dhaka 1212, Bangladesh",
   locationLabel: "Gulshan 1, Dhaka",
   location: {

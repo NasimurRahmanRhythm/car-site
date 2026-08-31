@@ -1,8 +1,8 @@
 /**
- * Temporary home of the site until a custom domain is bought. It is the last
- * fallback rather than a hardcoded value so a single env var replaces it.
+ * The production domain. Kept as the last fallback rather than the only source
+ * so `NEXT_PUBLIC_SITE_URL` can override it without a code change.
  */
-const DEFAULT_SITE_URL = "https://car-site-bay.vercel.app";
+const DEFAULT_SITE_URL = "https://www.vipmotorsbd.com";
 
 /**
  * The site's own absolute origin, no trailing slash.

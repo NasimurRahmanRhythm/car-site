@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { submitAppointment } from "@/lib/services/appointment.service";
 import {
   deleteAppointment,
+  getPendingAppointmentCount,
   setAppointmentStatus,
 } from "@/lib/services/admin.service";
 import type { AppointmentStatus } from "@/types/appointment";
@@ -43,10 +44,25 @@ export async function setAppointmentStatusAction(
   status: AppointmentStatus
 ): Promise<void> {
   await setAppointmentStatus(id, status);
-  revalidatePath("/admin/appointments");
+  revalidateAppointments();
 }
 
 export async function deleteAppointmentAction(id: string): Promise<void> {
   await deleteAppointment(id);
+  revalidateAppointments();
+}
+
+/**
+ * The nav badge lives in the admin layout, so the layout has to be revalidated
+ * too — refreshing only the page would leave a stale count sitting in the nav
+ * until the next poll.
+ */
+function revalidateAppointments(): void {
   revalidatePath("/admin/appointments");
+  revalidatePath("/admin", "layout");
+}
+
+/** Polled by the nav badge so a request that arrives mid-session shows up. */
+export async function getPendingAppointmentCountAction(): Promise<number> {
+  return getPendingAppointmentCount();
 }
