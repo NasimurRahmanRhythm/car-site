@@ -2,7 +2,6 @@
 
 import { useTransition } from "react";
 import { deleteImageAction, setCoverImageAction } from "@/app/actions/admin";
-import { cn } from "@/lib/utils";
 import styles from "./ImageUploader.module.css";
 
 interface ImageActionsProps {
@@ -20,7 +19,7 @@ export function ImageActions({ carId, imageId, storagePath, isCover }: ImageActi
       {!isCover && (
         <button
           type="button"
-          className={styles.actionButton}
+          className="admin-action"
           disabled={isPending}
           onClick={() => startTransition(() => setCoverImageAction(carId, imageId))}
         >
@@ -29,7 +28,7 @@ export function ImageActions({ carId, imageId, storagePath, isCover }: ImageActi
       )}
       <button
         type="button"
-        className={cn(styles.actionButton, styles.deleteAction)}
+        className="admin-action admin-action-danger"
         disabled={isPending}
         onClick={() => {
           if (!window.confirm("Remove this image?")) return;

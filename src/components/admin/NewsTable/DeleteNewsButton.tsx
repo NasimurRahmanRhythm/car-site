@@ -2,7 +2,6 @@
 
 import { useTransition } from "react";
 import { deleteNewsAction } from "@/app/actions/news";
-import styles from "./NewsTable.module.css";
 
 export function DeleteNewsButton({ postId }: { postId: string }) {
   const [isPending, startTransition] = useTransition();
@@ -15,7 +14,7 @@ export function DeleteNewsButton({ postId }: { postId: string }) {
   }
 
   return (
-    <button type="button" className={styles.deleteButton} onClick={handleClick} disabled={isPending}>
+    <button type="button" className="admin-action admin-action-danger" onClick={handleClick} disabled={isPending}>
       {isPending ? "Deleting…" : "Delete"}
     </button>
   );

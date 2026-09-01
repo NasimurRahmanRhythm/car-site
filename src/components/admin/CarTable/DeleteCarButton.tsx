@@ -2,7 +2,6 @@
 
 import { useTransition } from "react";
 import { deleteCarAction } from "@/app/actions/admin";
-import styles from "./CarTable.module.css";
 
 export function DeleteCarButton({ carId }: { carId: string }) {
   const [isPending, startTransition] = useTransition();
@@ -15,7 +14,7 @@ export function DeleteCarButton({ carId }: { carId: string }) {
   }
 
   return (
-    <button type="button" className={styles.deleteButton} onClick={handleClick} disabled={isPending}>
+    <button type="button" className="admin-action admin-action-danger" onClick={handleClick} disabled={isPending}>
       {isPending ? "Deleting…" : "Delete"}
     </button>
   );

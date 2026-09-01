@@ -5,7 +5,6 @@ import {
   deleteAppointmentAction,
   setAppointmentStatusAction,
 } from "@/app/actions/appointment";
-import { cn } from "@/lib/utils";
 import type { AppointmentStatus } from "@/types/appointment";
 import styles from "./AppointmentTable.module.css";
 
@@ -23,7 +22,7 @@ export function AppointmentActions({
       {status !== "confirmed" && (
         <button
           type="button"
-          className={styles.actionButton}
+          className="admin-action admin-action-solid"
           disabled={isPending}
           onClick={() => startTransition(() => setAppointmentStatusAction(id, "confirmed"))}
         >
@@ -33,7 +32,7 @@ export function AppointmentActions({
       {status !== "cancelled" && (
         <button
           type="button"
-          className={styles.actionButton}
+          className="admin-action"
           disabled={isPending}
           onClick={() => startTransition(() => setAppointmentStatusAction(id, "cancelled"))}
         >
@@ -42,7 +41,7 @@ export function AppointmentActions({
       )}
       <button
         type="button"
-        className={cn(styles.actionButton, styles.deleteButton)}
+        className="admin-action admin-action-danger"
         disabled={isPending}
         onClick={() => {
           if (!window.confirm("Delete this request? This cannot be undone.")) return;

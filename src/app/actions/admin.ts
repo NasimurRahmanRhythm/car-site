@@ -69,6 +69,7 @@ function parseCarInput(formData: FormData): Omit<CarInput, "slug"> {
 
 function revalidateEverywhere(carId?: string) {
   revalidatePath("/", "layout");
+  revalidatePath("/admin");
   if (carId) revalidatePath(`/admin/cars/${carId}`);
 }
 

@@ -9,7 +9,7 @@ import styles from "./MarqueeStrip.module.css";
 const MARKS_PER_RUN = 14;
 
 /** Seconds each wordmark takes to cross the strip. */
-const SECONDS_PER_MARK = 4;
+const SECONDS_PER_MARK = 5;
 
 export function MarqueeStrip() {
   const trackRef = useRef<HTMLDivElement>(null);

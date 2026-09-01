@@ -55,7 +55,7 @@ export function CarTable({ cars }: { cars: CarWithImages[] }) {
                 <td>{car.car_images.length}</td>
                 <td>
                   <div className={styles.actions}>
-                    <Link href={`/admin/cars/${car.id}`} className={styles.editLink}>
+                    <Link href={`/admin/cars/${car.id}`} className="admin-action">
                       Edit
                     </Link>
                     <DeleteCarButton carId={car.id} />

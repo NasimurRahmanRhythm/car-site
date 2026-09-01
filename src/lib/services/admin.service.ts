@@ -17,7 +17,8 @@ export async function getAllCarsForAdmin(): Promise<CarWithImages[]> {
   const { data, error } = await supabase
     .from("cars")
     .select("*, car_images(*)")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .order("sort_order", { referencedTable: "car_images", ascending: true });
 
   if (error) {
     console.error("getAllCarsForAdmin failed:", error.message);
@@ -33,6 +34,7 @@ export async function getCarForAdmin(id: string): Promise<CarWithImages | null> 
     .from("cars")
     .select("*, car_images(*)")
     .eq("id", id)
+    .order("sort_order", { referencedTable: "car_images", ascending: true })
     .maybeSingle();
 
   if (error) {
@@ -133,6 +135,18 @@ export async function uploadCarImage(
   const extension = file.name.split(".").pop() || "jpg";
   const storagePath = `${carId}/${crypto.randomUUID()}.${extension}`;
 
+  // What the car already has decides where this one lands: the very first
+  // image becomes the cover (otherwise a car could sit there with photos and
+  // no cover, leaving every thumbnail to an arbitrary fallback), and the rest
+  // queue up behind it in upload order.
+  const { data: existing } = await supabase
+    .from("car_images")
+    .select("id, is_cover")
+    .eq("car_id", carId);
+
+  const existingCount = existing?.length ?? 0;
+  const hasCover = existing?.some((image) => image.is_cover) ?? false;
+
   const { error: uploadError } = await supabase.storage
     .from(CAR_IMAGES_BUCKET)
     .upload(storagePath, file, { contentType: file.type, upsert: false });
@@ -152,8 +166,8 @@ export async function uploadCarImage(
       car_id: carId,
       url: publicUrl,
       storage_path: storagePath,
-      is_cover: options.isCover ?? false,
-      sort_order: options.sortOrder ?? 0,
+      is_cover: options.isCover ?? !hasCover,
+      sort_order: options.sortOrder ?? existingCount,
     })
     .select()
     .single();

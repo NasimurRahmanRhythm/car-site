@@ -19,7 +19,7 @@
 .links {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-2);
 }
 
 .link {
@@ -27,24 +27,20 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+  padding: 0.45rem 0.85rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
   font-size: var(--text-sm);
   color: var(--color-white-muted);
-  transition: color var(--duration-fast) var(--ease-out);
+  transition: background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
 }
 
 .link:hover {
+  border-color: var(--color-line-strong);
+  background: rgba(244, 244, 245, 0.05);
   color: var(--color-white);
-}
-
-.signOut {
-  font-size: var(--text-sm);
-  color: var(--color-white-muted);
-  border-bottom: 1px solid transparent;
-}
-
-.signOut:hover {
-  color: var(--color-danger);
-  border-color: var(--color-danger);
 }
 
 /* Count of appointment requests nobody has actioned yet. Rendered only when

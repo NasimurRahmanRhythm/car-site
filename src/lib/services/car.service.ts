@@ -61,6 +61,7 @@ export async function getCarBySlug(slug: string): Promise<CarWithImages | null> 
     .from("cars")
     .select(CAR_WITH_IMAGES_SELECT)
     .eq("slug", slug)
+    .order("sort_order", { referencedTable: "car_images", ascending: true })
     .maybeSingle();
 
   if (error) {

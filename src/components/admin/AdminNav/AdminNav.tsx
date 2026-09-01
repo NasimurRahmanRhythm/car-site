@@ -29,7 +29,7 @@ export async function AdminNav() {
           View Site
         </Link>
         <form action={signOutAction}>
-          <button type="submit" className={styles.signOut}>
+          <button type="submit" className="admin-action admin-action-danger">
             Sign Out
           </button>
         </form>

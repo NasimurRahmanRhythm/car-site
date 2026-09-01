@@ -42,10 +42,10 @@ export function NewsTable({ posts }: { posts: NewsPost[] }) {
               <td>{formatDate(post.published_at)}</td>
               <td>
                 <div className={styles.actions}>
-                  <Link href={`/news/${post.slug}`} className={styles.editLink} target="_blank">
+                  <Link href={`/news/${post.slug}`} className="admin-action" target="_blank">
                     View
                   </Link>
-                  <Link href={`/admin/news/${post.id}`} className={styles.editLink}>
+                  <Link href={`/admin/news/${post.id}`} className="admin-action">
                     Edit
                   </Link>
                   <DeleteNewsButton postId={post.id} />

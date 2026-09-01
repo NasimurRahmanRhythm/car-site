@@ -43,18 +43,6 @@
   font-size: var(--text-xs);
 }
 
-.actionButton {
-  color: var(--color-white-muted);
-}
-
-.actionButton:hover {
-  color: var(--color-white);
-}
-
-.deleteAction:hover {
-  color: var(--color-danger);
-}
-
 /* The dropzone brings its own dashed frame, so the form is just a stack. */
 .uploadForm {
   display: flex;
