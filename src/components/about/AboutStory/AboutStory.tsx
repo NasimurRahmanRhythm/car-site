@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Container } from "@/components/common/Container";
 import { RevealBlock } from "@/components/common/RevealBlock";
 import { ABOUT } from "@/data/about";
@@ -7,15 +8,30 @@ export function AboutStory() {
   return (
     <section className={styles.section}>
       <Container>
-        <RevealBlock>
-          <div className={styles.paragraphs}>
-            {ABOUT.paragraphs.map((paragraph) => (
-              <p key={paragraph} className="body-lg">
-                {paragraph}
-              </p>
-            ))}
-          </div>
-        </RevealBlock>
+        <div className={styles.content}>
+          <RevealBlock>
+            <div className={styles.paragraphs}>
+              {ABOUT.paragraphs.map((paragraph) => (
+                <p key={paragraph} className="body-lg">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          </RevealBlock>
+
+          <RevealBlock>
+            <figure className={styles.showroom}>
+              <Image
+                src={ABOUT.showroom.src}
+                alt={ABOUT.showroom.alt}
+                width={ABOUT.showroom.width}
+                height={ABOUT.showroom.height}
+                sizes="(min-width: 1024px) 40vw, 100vw"
+                className={styles.showroomImage}
+              />
+            </figure>
+          </RevealBlock>
+        </div>
 
         <div className={styles.stats}>
           {ABOUT.stats.map((stat) => (

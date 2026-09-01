@@ -11,9 +11,9 @@ export const SITE = {
   address: "Gulshan 1, Dhaka 1212, Bangladesh",
   locationLabel: "Gulshan 1, Dhaka",
   location: {
-    // Gulshan 1 circle
-    lat: 23.7806,
-    lng: 90.4152,
+    // The showroom itself, off the Google Maps pin — not the Gulshan 1 circle.
+    lat: 23.789026,
+    lng: 90.420623,
   },
   social: {
     instagram: "https://instagram.com",
