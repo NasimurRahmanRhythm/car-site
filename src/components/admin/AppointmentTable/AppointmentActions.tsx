@@ -5,6 +5,7 @@ import {
   deleteAppointmentAction,
   setAppointmentStatusAction,
 } from "@/app/actions/appointment";
+import { ConfirmDeleteButton } from "@/components/common/ConfirmDialog";
 import type { AppointmentStatus } from "@/types/appointment";
 import styles from "./AppointmentTable.module.css";
 
@@ -39,17 +40,11 @@ export function AppointmentActions({
           Cancel
         </button>
       )}
-      <button
-        type="button"
-        className="admin-action admin-action-danger"
-        disabled={isPending}
-        onClick={() => {
-          if (!window.confirm("Delete this request? This cannot be undone.")) return;
-          startTransition(() => deleteAppointmentAction(id));
-        }}
-      >
-        Delete
-      </button>
+      <ConfirmDeleteButton
+        title="Delete this request?"
+        message="This cannot be undone."
+        onConfirm={() => deleteAppointmentAction(id)}
+      />
     </div>
   );
 }

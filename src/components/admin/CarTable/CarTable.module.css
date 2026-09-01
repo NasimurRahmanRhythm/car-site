@@ -2,6 +2,61 @@
   overflow-x: auto;
 }
 
+.filters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.filterLabel {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-white-muted);
+}
+
+.filterSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 0.55rem 2.25rem 0.55rem 1rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: 999px;
+  /* Opaque, not translucent: Chrome paints the open option list from this
+     colour, and a see-through swatch leaves white text on a white popup. */
+  background: var(--color-black-elevated)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23c8c8ca' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    no-repeat right 1rem center;
+  background-size: 10px 6px;
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.filterSelect option {
+  background: var(--color-black-elevated);
+  color: var(--color-white);
+}
+
+.filterSelect:hover {
+  border-color: var(--color-accent);
+}
+
+.filterSelect:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.categoryList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  max-width: 220px;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;

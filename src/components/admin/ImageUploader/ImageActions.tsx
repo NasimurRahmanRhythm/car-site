@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { deleteImageAction, setCoverImageAction } from "@/app/actions/admin";
+import { ConfirmDeleteButton } from "@/components/common/ConfirmDialog";
 import styles from "./ImageUploader.module.css";
 
 interface ImageActionsProps {
@@ -26,17 +27,12 @@ export function ImageActions({ carId, imageId, storagePath, isCover }: ImageActi
           Set Cover
         </button>
       )}
-      <button
-        type="button"
-        className="admin-action admin-action-danger"
-        disabled={isPending}
-        onClick={() => {
-          if (!window.confirm("Remove this image?")) return;
-          startTransition(() => deleteImageAction(carId, imageId, storagePath));
-        }}
-      >
-        Remove
-      </button>
+      <ConfirmDeleteButton
+        label="Remove"
+        title="Remove this image?"
+        message="This cannot be undone."
+        onConfirm={() => deleteImageAction(carId, imageId, storagePath)}
+      />
     </div>
   );
 }

@@ -6,10 +6,14 @@ import { NAV_LINKS } from "@/data/navigation";
 import { SITE } from "@/data/site";
 import styles from "./MobileMenu.module.css";
 
+// pointerEvents isn't animatable, so Motion applies it the instant each
+// variant becomes active rather than over the transition duration — this
+// keeps the fading-out overlay from swallowing taps (e.g. re-opening the
+// menu) meant for whatever's underneath during its exit fade.
 const overlayVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.3 } },
-  exit: { opacity: 0, transition: { duration: 0.25 } },
+  hidden: { opacity: 0, pointerEvents: "none" },
+  visible: { opacity: 1, pointerEvents: "auto", transition: { duration: 0.3 } },
+  exit: { opacity: 0, pointerEvents: "none", transition: { duration: 0.25 } },
 };
 
 const listVariants: Variants = {

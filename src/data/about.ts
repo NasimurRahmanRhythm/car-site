@@ -14,7 +14,7 @@ export const ABOUT = {
     // Intrinsic size of the file — next/image needs it to reserve the space
     // before the image loads.
     width: 960,
-    height: 1280,
+    height: 1090,
   },
   stats: [
     { value: "500+", label: "Vehicles Delivered" },
