@@ -6,9 +6,18 @@ import { ImageActions } from "./ImageActions";
 import { UploadImagesForm } from "./UploadImagesForm";
 import styles from "./ImageUploader.module.css";
 
-export function ImageUploader({ carId, images }: { carId: string; images: CarImage[] }) {
+interface ImageUploaderProps {
+  carId: string;
+  images: CarImage[];
+  /** Photos that failed while the vehicle was being created, if any. */
+  error?: string;
+}
+
+export function ImageUploader({ carId, images, error }: ImageUploaderProps) {
   return (
     <div className={styles.wrapper}>
+      {error && <p className={`${styles.feedback} ${styles.error}`}>{error}</p>}
+
       {images.length > 0 && (
         <div className={styles.grid}>
           {images.map((image) => (

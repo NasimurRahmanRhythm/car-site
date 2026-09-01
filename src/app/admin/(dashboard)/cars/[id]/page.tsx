@@ -11,10 +11,16 @@ export const metadata: Metadata = {
   title: "Edit Vehicle",
 };
 
-export default async function EditCarPage({ params }: PageProps<"/admin/cars/[id]">) {
+export default async function EditCarPage({
+  params,
+  searchParams,
+}: PageProps<"/admin/cars/[id]">) {
   const { id } = await params;
   const car = await getCarForAdmin(id);
   if (!car) notFound();
+
+  // Set by createCarAction when the vehicle saved but a photo did not.
+  const { imageError } = await searchParams;
 
   const boundUpdateAction = updateCarAction.bind(null, id);
 
@@ -24,7 +30,11 @@ export default async function EditCarPage({ params }: PageProps<"/admin/cars/[id
         <h1 className={styles.heading}>{carDisplayName(car)}</h1>
       </div>
 
-      <ImageUploader carId={car.id} images={car.car_images} />
+      <ImageUploader
+        carId={car.id}
+        images={car.car_images}
+        error={typeof imageError === "string" ? imageError : undefined}
+      />
       <CarForm car={car} action={boundUpdateAction} submitLabel="Save Changes" />
     </div>
   );

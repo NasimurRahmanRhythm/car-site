@@ -69,6 +69,13 @@ function revalidateEverywhere(carId?: string) {
   if (carId) revalidatePath(`/admin/cars/${carId}`);
 }
 
+/** Files picked in a form, ignoring the empty entry a browser sends for none. */
+function pickedFiles(formData: FormData): File[] {
+  return formData
+    .getAll("files")
+    .filter((entry): entry is File => entry instanceof File && entry.size > 0);
+}
+
 export async function createCarAction(formData: FormData): Promise<void> {
   const input = parseCarInput(formData);
   const { car, error } = await createCar(input);
@@ -77,8 +84,28 @@ export async function createCarAction(formData: FormData): Promise<void> {
     throw new Error(error ?? "Failed to create vehicle.");
   }
 
+  // Photos can only be attached now: both the storage path and the car_images
+  // row are keyed by car id, so there is nothing to upload against until the
+  // row exists. The first one becomes the cover, matching the form's hint.
+  const failures: string[] = [];
+
+  for (const [index, file] of pickedFiles(formData).entries()) {
+    const { error: uploadError } = await uploadCarImage(car.id, file, {
+      isCover: index === 0,
+      sortOrder: index,
+    });
+    if (uploadError) failures.push(`${file.name} — ${uploadError}`);
+  }
+
   revalidateEverywhere();
-  redirect(`/admin/cars/${car.id}`);
+
+  // The vehicle itself saved, so this is not an error page — send them to the
+  // edit screen where the uploader is, and say which photos did not make it
+  // rather than letting them silently come up short.
+  const query =
+    failures.length > 0 ? `?imageError=${encodeURIComponent(failures.join(" · "))}` : "";
+
+  redirect(`/admin/cars/${car.id}${query}`);
 }
 
 export async function updateCarAction(carId: string, formData: FormData): Promise<void> {
@@ -111,9 +138,7 @@ export async function uploadImagesAction(
   _prevState: UploadImagesState | null,
   formData: FormData
 ): Promise<UploadImagesState> {
-  const files = formData
-    .getAll("files")
-    .filter((entry): entry is File => entry instanceof File && entry.size > 0);
+  const files = pickedFiles(formData);
 
   if (files.length === 0) {
     return { uploaded: 0, error: "Choose at least one image first.", completedAt: Date.now() };

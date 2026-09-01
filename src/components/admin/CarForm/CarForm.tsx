@@ -1,5 +1,6 @@
 import { CATEGORIES, CAR_STATUS_LABELS } from "@/lib/constants";
 import type { CarWithImages } from "@/types/car";
+import { FileDropzone } from "@/components/common/FileDropzone";
 import { SubmitButton } from "@/components/common/SubmitButton";
 import styles from "./CarForm.module.css";
 
@@ -10,6 +11,12 @@ interface CarFormProps {
 }
 
 export function CarForm({ car, action, submitLabel }: CarFormProps) {
+  // On an existing car the photos live in <ImageUploader>, which can also
+  // delete them and pick the cover — none of which is possible before the row
+  // exists. So the new-vehicle form carries its own picker and hands the files
+  // to createCarAction, which uploads them once the car has an id.
+  const isNewCar = !car;
+
   return (
     <form action={action} className={styles.form}>
       <fieldset className={styles.fieldset}>
@@ -287,6 +294,22 @@ export function CarForm({ car, action, submitLabel }: CarFormProps) {
           />
         </div>
       </fieldset>
+
+      {isNewCar && (
+        <fieldset className={styles.fieldset}>
+          <legend className={styles.legend}>Photos</legend>
+
+          <div className={`${styles.field} ${styles.wide}`}>
+            <FileDropzone
+              id="car-images"
+              name="files"
+              multiple
+              label="Add photos"
+              hint="JPG, PNG or WebP. The first photo becomes the cover. You can add more after saving."
+            />
+          </div>
+        </fieldset>
+      )}
 
       <div className={styles.footer}>
         <SubmitButton label={submitLabel} />
