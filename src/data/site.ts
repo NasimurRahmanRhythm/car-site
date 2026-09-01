@@ -8,10 +8,10 @@ export const SITE = {
   phone: "+8801700000000",
   phoneDisplay: "+880 1700-000000",
   email: "info@vipmotorsbd.com",
-  address: "Gulshan 1, Dhaka 1212, Bangladesh",
-  locationLabel: "Gulshan 1, Dhaka",
+  address: "Gulshan 2, Dhaka 1212, Bangladesh",
+  locationLabel: "Gulshan 2, Dhaka",
   location: {
-    // The showroom itself, off the Google Maps pin — not the Gulshan 1 circle.
+    // The showroom itself, off the Google Maps pin — not the Gulshan 2 circle.
     lat: 23.789026,
     lng: 90.420623,
   },
