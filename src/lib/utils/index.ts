@@ -1,9 +1,32 @@
-export function formatPrice(price: number, currency = "AED"): string {
-  return new Intl.NumberFormat("en-AE", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 0,
-  }).format(price);
+const DEFAULT_CURRENCY = "AED";
+
+/**
+ * `cars.currency` is a free-text column, so it holds whatever an admin typed —
+ * "Tk", "taka", a code with a stray space. `Intl.NumberFormat` throws a
+ * RangeError on anything that is not a valid ISO 4217 code, and an uncaught
+ * throw inside a Server Component takes the whole page down rather than just
+ * the price cell, so an unrecognised code falls back to a plain number with the
+ * typed label in front of it. Keeping the label rather than substituting the
+ * default matters: showing an AED price for a car listed in taka would be worse
+ * than showing an unstyled one.
+ */
+export function formatPrice(price: number, currency?: string | null): string {
+  const code = (currency ?? "").trim() || DEFAULT_CURRENCY;
+  const amount = Number(price);
+
+  if (!Number.isFinite(amount)) return "—";
+
+  try {
+    return new Intl.NumberFormat("en-AE", {
+      style: "currency",
+      currency: code,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  } catch {
+    return `${code} ${new Intl.NumberFormat("en-AE", {
+      maximumFractionDigits: 0,
+    }).format(amount)}`;
+  }
 }
 
 export function formatMileage(mileage: number | null): string {
@@ -32,12 +55,22 @@ export function carDisplayName(car: {
   return [car.year, car.make, car.model, car.trim].filter(Boolean).join(" ");
 }
 
-export function formatDate(value: string): string {
+/**
+ * Same reasoning as formatPrice: `Intl.DateTimeFormat` throws "Invalid time
+ * value" on an unparseable date, which would take down any page that renders
+ * one alongside good rows.
+ */
+export function formatDate(value: string | null | undefined): string {
+  if (!value) return "—";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+
   return new Intl.DateTimeFormat("en-GB", {
     day: "numeric",
     month: "long",
     year: "numeric",
-  }).format(new Date(value));
+  }).format(date);
 }
 
 /** Trims a news body down to a card-sized teaser without cutting mid-word. */

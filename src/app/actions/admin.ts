@@ -40,7 +40,10 @@ function parseCarInput(formData: FormData): Omit<CarInput, "slug"> {
     year: Number(formData.get("year")),
     trim: toOptionalString(formData, "trim"),
     price: Number(formData.get("price")),
-    currency: String(formData.get("currency") ?? "AED").trim() || "AED",
+    // Upper-cased so "aed" and "AED" do not become two different codes in the
+    // column. Anything that is not a real ISO 4217 code is still stored as
+    // typed — formatPrice() renders those without throwing.
+    currency: String(formData.get("currency") ?? "AED").trim().toUpperCase() || "AED",
     status: (String(formData.get("status") ?? "available") as CarStatus),
     categories,
     mileage: toOptionalNumber(formData, "mileage"),
