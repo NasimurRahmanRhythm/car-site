@@ -1,4 +1,5 @@
-const DEFAULT_CURRENCY = "AED";
+/** Prices are quoted in BDT. Rows saved before that stay as they are. */
+export const DEFAULT_CURRENCY = "BDT";
 
 /**
  * `cars.currency` is a free-text column, so it holds whatever an admin typed —
@@ -7,8 +8,8 @@ const DEFAULT_CURRENCY = "AED";
  * throw inside a Server Component takes the whole page down rather than just
  * the price cell, so an unrecognised code falls back to a plain number with the
  * typed label in front of it. Keeping the label rather than substituting the
- * default matters: showing an AED price for a car listed in taka would be worse
- * than showing an unstyled one.
+ * default matters: showing a BDT price for a car listed in another currency
+ * would be worse than showing an unstyled one.
  */
 export function formatPrice(price: number, currency?: string | null): string {
   const code = (currency ?? "").trim() || DEFAULT_CURRENCY;

@@ -1,4 +1,5 @@
 import { CATEGORIES, CAR_STATUS_LABELS } from "@/lib/constants";
+import { DEFAULT_CURRENCY } from "@/lib/utils";
 import type { CarWithImages } from "@/types/car";
 import { FileDropzone } from "@/components/common/FileDropzone";
 import { SubmitButton } from "@/components/common/SubmitButton";
@@ -16,6 +17,11 @@ export function CarForm({ car, action, submitLabel }: CarFormProps) {
   // exists. So the new-vehicle form carries its own picker and hands the files
   // to createCarAction, which uploads them once the car has an id.
   const isNewCar = !car;
+
+  // Fixed rather than typed: a free-text code once reached Intl.NumberFormat as
+  // an invalid currency and took the page down. New cars are BDT; an existing
+  // row keeps whatever it was saved with, shown but not editable.
+  const currency = car?.currency ?? DEFAULT_CURRENCY;
 
   return (
     <form action={action} className={styles.form}>
@@ -91,11 +97,14 @@ export function CarForm({ car, action, submitLabel }: CarFormProps) {
           </label>
           <input
             id="currency"
-            name="currency"
             type="text"
-            defaultValue={car?.currency ?? "AED"}
+            defaultValue={currency}
+            disabled
             className={styles.input}
           />
+          {/* A disabled field is left out of the submission, so the value that
+              the action reads rides along here instead. */}
+          <input type="hidden" name="currency" value={currency} />
         </div>
 
         <div className={styles.field}>

@@ -62,6 +62,14 @@
   border-color: var(--color-accent);
 }
 
+/* Currency is fixed, so it reads as a value on show rather than a field to
+   fill in — muted, and the cursor never suggests it is editable. */
+.input:disabled {
+  color: var(--color-white-muted);
+  border-color: var(--color-line);
+  cursor: not-allowed;
+}
+
 .checkboxRow {
   display: flex;
   flex-wrap: wrap;

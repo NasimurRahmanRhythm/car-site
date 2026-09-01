@@ -11,6 +11,7 @@ import {
   setCoverImage,
   type CarInput,
 } from "@/lib/services/admin.service";
+import { DEFAULT_CURRENCY } from "@/lib/utils";
 import type { CarCategory, CarStatus } from "@/types/car";
 
 function toOptionalString(formData: FormData, key: string): string | null {
@@ -40,10 +41,12 @@ function parseCarInput(formData: FormData): Omit<CarInput, "slug"> {
     year: Number(formData.get("year")),
     trim: toOptionalString(formData, "trim"),
     price: Number(formData.get("price")),
-    // Upper-cased so "aed" and "AED" do not become two different codes in the
-    // column. Anything that is not a real ISO 4217 code is still stored as
-    // typed — formatPrice() renders those without throwing.
-    currency: String(formData.get("currency") ?? "AED").trim().toUpperCase() || "AED",
+    // The form's currency field is fixed, so this only ever sees BDT on a new
+    // car or the value the row already had on an edit. Upper-cased so casing
+    // cannot fork one code into two.
+    currency:
+      String(formData.get("currency") ?? DEFAULT_CURRENCY).trim().toUpperCase() ||
+      DEFAULT_CURRENCY,
     status: (String(formData.get("status") ?? "available") as CarStatus),
     categories,
     mileage: toOptionalNumber(formData, "mileage"),
