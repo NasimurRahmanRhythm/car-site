@@ -16,35 +16,6 @@ export function Footer() {
           <div className={styles.brandCol}>
             <Logo className={styles.logo} />
             <p className={styles.blurb}>{SITE.tagline}</p>
-            <div className={styles.social}>
-              <a
-                href={SITE.social.instagram}
-                className={styles.socialLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-              >
-                IG
-              </a>
-              <a
-                href={SITE.social.facebook}
-                className={styles.socialLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-              >
-                FB
-              </a>
-              <a
-                href={SITE.social.youtube}
-                className={styles.socialLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="YouTube"
-              >
-                YT
-              </a>
-            </div>
           </div>
 
           <div>

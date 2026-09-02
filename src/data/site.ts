@@ -15,10 +15,4 @@ export const SITE = {
     lat: 23.789026,
     lng: 90.420623,
   },
-  social: {
-    instagram: "https://instagram.com",
-    facebook: "https://facebook.com",
-    youtube: "https://youtube.com",
-    tiktok: "https://tiktok.com",
-  },
 } as const;

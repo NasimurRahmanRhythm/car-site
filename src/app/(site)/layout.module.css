@@ -1,0 +1,5 @@
+/* The navbar is fixed, so it no longer takes space in the flow — this
+   reserves the height it used to occupy. */
+.main {
+  padding-top: var(--nav-height);
+}

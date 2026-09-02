@@ -64,9 +64,3 @@
   font-size: var(--text-xl);
   color: var(--color-accent);
 }
-
-.social {
-  display: flex;
-  gap: var(--space-4);
-  color: var(--color-white-muted);
-}

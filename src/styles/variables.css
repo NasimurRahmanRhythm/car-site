@@ -47,7 +47,6 @@
   --container-max: 1400px;
   --container-padding: clamp(1.25rem, 4vw, 4rem);
   --nav-height: 64px;
-  --topbar-height: 40px;
 
   /* Motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);

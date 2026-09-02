@@ -79,17 +79,6 @@ export function MobileMenu({ onClose }: { onClose: () => void }) {
         <a href={`tel:${SITE.phone.replace(/\s+/g, "")}`} className={styles.phone}>
           {SITE.phoneDisplay}
         </a>
-        <div className={styles.social}>
-          <a href={SITE.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-            Instagram
-          </a>
-          <a href={SITE.social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-            Facebook
-          </a>
-          <a href={SITE.social.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-            YouTube
-          </a>
-        </div>
       </div>
     </motion.div>
   );
