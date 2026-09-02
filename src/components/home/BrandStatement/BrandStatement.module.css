@@ -14,13 +14,15 @@
   max-width: 20ch;
 }
 
-/* The heading alone left this column light next to the copy and stats. The
-   photo is portrait and the full-size version already lives on About Us, so it
-   is capped small here — enough to anchor the column, not to compete with the
-   heading. */
+/* The heading alone left this column light next to the copy and stats, so the
+   photo anchors it. Its width is set to run out to the end of the heading's
+   longest line — "on Rare Machines", 16 characters of the display face at a
+   fixed 4rem, which lands a little under 28rem — so the two edges line up
+   instead of the photo stopping mid-word. */
 .portrait {
   margin: var(--space-8) 0 0;
-  max-width: 300px;
+  width: 100%;
+  max-width: min(28rem, 100%);
   overflow: hidden;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-sm);

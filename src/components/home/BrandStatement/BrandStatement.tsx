@@ -26,7 +26,7 @@ export function BrandStatement() {
                   alt={ABOUT.showroom.alt}
                   width={ABOUT.showroom.width}
                   height={ABOUT.showroom.height}
-                  sizes="320px"
+                  sizes="(min-width: 448px) 448px, 100vw"
                   className={styles.portraitImage}
                 />
               </figure>
