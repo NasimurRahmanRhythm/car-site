@@ -1,0 +1,25 @@
+/* One continuous backdrop shared by the category grid and the news strip, so
+   the image reads as a single panel instead of repeating per section. */
+.backdrop {
+  position: relative;
+  isolation: isolate;
+  background-image: url("/images/category-background.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Darkening wash — the tiles and cards sit on top of it, and it keeps the
+   headings readable no matter which part of the photo lands behind them. */
+.backdrop::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(11, 11, 11, 0.94) 0%,
+    rgba(11, 11, 11, 0.72) 45%,
+    rgba(11, 11, 11, 0.94) 100%
+  );
+}

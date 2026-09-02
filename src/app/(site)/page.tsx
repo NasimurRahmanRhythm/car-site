@@ -9,6 +9,7 @@ import { ContactCta } from "@/components/home/ContactCta";
 import { MarqueeStrip } from "@/components/common/MarqueeStrip";
 import { getFeaturedCars, getFilterOptions } from "@/lib/services/car.service";
 import { getLatestNews } from "@/lib/services/news.service";
+import styles from "./page.module.css";
 
 export default async function HomePage() {
   const [featuredCars, filterOptions, latestNews] = await Promise.all([
@@ -24,8 +25,10 @@ export default async function HomePage() {
       <FeaturedCars cars={featuredCars} />
       <MarqueeStrip />
       <BrandStatement />
-      <CategoryStrip />
-      <NewsStrip posts={latestNews} />
+      <div className={styles.backdrop}>
+        <CategoryStrip />
+        <NewsStrip posts={latestNews} />
+      </div>
       <StoreMap />
       <ContactCta />
     </>
