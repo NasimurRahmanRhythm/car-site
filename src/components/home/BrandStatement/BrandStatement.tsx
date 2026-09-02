@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Container } from "@/components/common/Container";
 import { RevealText } from "@/components/common/RevealText";
 import { RevealBlock } from "@/components/common/RevealBlock";
@@ -17,6 +18,19 @@ export function BrandStatement() {
               lines={["A House Built", "on Rare Machines"]}
               className={`display-2 ${styles.heading}`}
             />
+
+            <RevealBlock>
+              <figure className={styles.portrait}>
+                <Image
+                  src={ABOUT.showroom.src}
+                  alt={ABOUT.showroom.alt}
+                  width={ABOUT.showroom.width}
+                  height={ABOUT.showroom.height}
+                  sizes="320px"
+                  className={styles.portraitImage}
+                />
+              </figure>
+            </RevealBlock>
           </div>
 
           <RevealBlock>
