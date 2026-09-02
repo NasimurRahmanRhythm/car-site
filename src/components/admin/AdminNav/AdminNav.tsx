@@ -21,6 +21,9 @@ export async function AdminNav() {
         <Link href="/admin/news" className={styles.link}>
           News
         </Link>
+        <Link href="/admin/360-view" className={styles.link}>
+          360&deg; View
+        </Link>
         <AppointmentsLink initialCount={pendingAppointments} />
         <Link href="/admin/cars/new" className={styles.link}>
           Add Vehicle

@@ -11,6 +11,13 @@ import {
   setCoverImage,
   type CarInput,
 } from "@/lib/services/admin.service";
+import {
+  addScene,
+  deleteScene,
+  setDefaultScene,
+  addHotspot,
+  deleteHotspot,
+} from "@/lib/services/showroom.service";
 import { DEFAULT_CURRENCY } from "@/lib/utils";
 import type { CarCategory, CarStatus } from "@/types/car";
 
@@ -180,4 +187,89 @@ export async function deleteImageAction(
 export async function setCoverImageAction(carId: string, imageId: string): Promise<void> {
   await setCoverImage(carId, imageId);
   revalidateEverywhere(carId);
+}
+
+// ── Showroom 360° tour ────────────────────────────────────────────
+
+function revalidateTour() {
+  revalidatePath("/360-view");
+  revalidatePath("/admin/360-view");
+}
+
+export interface SceneUploadState {
+  error?: string;
+  success?: boolean;
+  completedAt: number;
+}
+
+export async function addSceneAction(
+  _prevState: SceneUploadState | null,
+  formData: FormData
+): Promise<SceneUploadState> {
+  const file = formData.get("panorama");
+  const title = String(formData.get("title") ?? "").trim();
+
+  if (!(file instanceof File) || file.size === 0) {
+    return { error: "Choose a panorama image first.", completedAt: Date.now() };
+  }
+  if (!title) {
+    return { error: "Give the scene a name, so hotspots can point at it.", completedAt: Date.now() };
+  }
+
+  const { error } = await addScene(title, file);
+  if (error) return { error, completedAt: Date.now() };
+
+  revalidateTour();
+  return { success: true, completedAt: Date.now() };
+}
+
+export async function deleteSceneAction(sceneId: string): Promise<void> {
+  await deleteScene(sceneId);
+  revalidateTour();
+}
+
+export async function setDefaultSceneAction(sceneId: string): Promise<void> {
+  await setDefaultScene(sceneId);
+  revalidateTour();
+}
+
+export interface HotspotState {
+  error?: string;
+  success?: boolean;
+  completedAt: number;
+}
+
+export async function addHotspotAction(
+  sceneId: string,
+  _prevState: HotspotState | null,
+  formData: FormData
+): Promise<HotspotState> {
+  const targetSceneId = String(formData.get("target_scene_id") ?? "");
+  const pitch = Number(formData.get("pitch"));
+  const yaw = Number(formData.get("yaw"));
+
+  if (!targetSceneId) {
+    return { error: "Pick which scene this hotspot leads to.", completedAt: Date.now() };
+  }
+  if (!Number.isFinite(pitch) || !Number.isFinite(yaw)) {
+    return { error: "Click a spot in the panorama to place the hotspot.", completedAt: Date.now() };
+  }
+
+  const { error } = await addHotspot({
+    sceneId,
+    targetSceneId,
+    label: String(formData.get("label") ?? "").trim() || null,
+    pitch,
+    yaw,
+  });
+
+  if (error) return { error, completedAt: Date.now() };
+
+  revalidateTour();
+  return { success: true, completedAt: Date.now() };
+}
+
+export async function deleteHotspotAction(hotspotId: string): Promise<void> {
+  await deleteHotspot(hotspotId);
+  revalidateTour();
 }

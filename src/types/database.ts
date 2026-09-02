@@ -277,6 +277,80 @@ export interface Database {
           },
         ];
       };
+      tour_scenes: {
+        Row: {
+          id: string;
+          title: string;
+          url: string;
+          storage_path: string;
+          width: number;
+          height: number;
+          sort_order: number;
+          is_default: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          url: string;
+          storage_path: string;
+          width: number;
+          height: number;
+          sort_order?: number;
+          is_default?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          url?: string;
+          storage_path?: string;
+          width?: number;
+          height?: number;
+          sort_order?: number;
+          is_default?: boolean;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      tour_hotspots: {
+        Row: {
+          id: string;
+          scene_id: string;
+          target_scene_id: string;
+          label: string | null;
+          pitch: number;
+          yaw: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          scene_id: string;
+          target_scene_id: string;
+          label?: string | null;
+          pitch: number;
+          yaw: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          scene_id?: string;
+          target_scene_id?: string;
+          label?: string | null;
+          pitch?: number;
+          yaw?: number;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "tour_hotspots_scene_id_fkey";
+            columns: ["scene_id"];
+            isOneToOne: false;
+            referencedRelation: "tour_scenes";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
