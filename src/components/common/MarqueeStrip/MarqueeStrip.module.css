@@ -16,7 +16,6 @@
 .item {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-8);
   margin-right: var(--space-8);
   opacity: 0.7;
 }
@@ -27,22 +26,42 @@
   width: auto;
 }
 
-.dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--color-accent);
+/* The brand files are single-path black SVGs, so they are used as a mask and
+   painted with the strip's colour rather than shown as images. */
+.brand {
+  display: inline-block;
   flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  margin-right: var(--space-6);
+  background-color: var(--color-white-muted);
+  opacity: 0.55;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
 }
 
 @media (min-width: 768px) {
   .item .logoMark {
     height: 3.75rem;
   }
+
+  .brand {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
 }
 
 @media (min-width: 1280px) {
   .item .logoMark {
     height: 4.5rem;
+  }
+
+  .brand {
+    width: 3.25rem;
+    height: 3.25rem;
   }
 }
