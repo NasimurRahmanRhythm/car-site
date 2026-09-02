@@ -4,7 +4,6 @@ export type { CarCategory, CarStatus };
 
 export type Car = Database["public"]["Tables"]["cars"]["Row"];
 export type CarImage = Database["public"]["Tables"]["car_images"]["Row"];
-export type Inquiry = Database["public"]["Tables"]["inquiries"]["Row"];
 export type AdminMember = Database["public"]["Tables"]["admin_members"]["Row"];
 
 export interface CarWithImages extends Car {

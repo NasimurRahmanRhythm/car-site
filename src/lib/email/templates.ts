@@ -1,8 +1,9 @@
 import "server-only";
 import { SITE } from "@/data/site";
 import { getSiteUrl } from "@/lib/site-url";
+import { BOOKINGS, type BookingKind } from "@/lib/bookings";
 
-export interface AppointmentEmailData {
+export interface BookingEmailData {
   name: string;
   email: string;
   phone?: string | null;
@@ -52,7 +53,7 @@ function formatEmailTime(value?: string | null): string | null {
 }
 
 /** The requested slot as one line, or a note that no specific time was asked for. */
-function slotLine(data: AppointmentEmailData): string {
+function slotLine(data: BookingEmailData): string {
   const date = formatEmailDate(data.preferredDate);
   const time = formatEmailTime(data.preferredTime);
   if (date && time) return `${date} at ${time}`;
@@ -169,15 +170,18 @@ export interface RenderedEmail {
 }
 
 /** Sent to the visitor the moment their request is stored. */
-export function appointmentReceivedEmail(data: AppointmentEmailData): RenderedEmail {
+export function bookingReceivedEmail(
+  kind: BookingKind,
+  data: BookingEmailData
+): RenderedEmail {
+  const { noun } = BOOKINGS[kind];
   const slot = slotLine(data);
   const firstName = data.name.split(" ")[0] || data.name;
 
   const html = layout({
-    preheader: `We have your viewing request for ${slot}.`,
+    preheader: `We have your ${noun} request for ${slot}.`,
     heading: `Thank you, ${firstName}.`,
-    intro:
-      "Your viewing request has reached our showroom team. We will confirm your appointment shortly, usually within one business day.",
+    intro: `Your ${noun} request has reached our showroom team. We will confirm it shortly, usually within one business day.`,
     bodyHtml:
       detailTable(
         detailRow("Requested slot", slot) +
@@ -193,7 +197,7 @@ export function appointmentReceivedEmail(data: AppointmentEmailData): RenderedEm
   const text = [
     `Thank you, ${firstName}.`,
     "",
-    "Your viewing request has reached our showroom team. We will confirm your appointment shortly, usually within one business day.",
+    `Your ${noun} request has reached our showroom team. We will confirm it shortly, usually within one business day.`,
     "",
     `Requested slot: ${slot}`,
     data.phone ? `Phone: ${data.phone}` : "",
@@ -204,28 +208,30 @@ export function appointmentReceivedEmail(data: AppointmentEmailData): RenderedEm
     .filter(Boolean)
     .join("\n");
 
-  return { subject: `We received your viewing request - ${SITE.name}`, html, text };
+  return { subject: `We received your ${noun} request - ${SITE.name}`, html, text };
 }
 
 /** Sent to the visitor when an admin confirms or cancels their request. */
-export function appointmentStatusEmail(
-  data: AppointmentEmailData,
+export function bookingStatusEmail(
+  kind: BookingKind,
+  data: BookingEmailData,
   status: "confirmed" | "cancelled"
 ): RenderedEmail {
+  const { noun, path } = BOOKINGS[kind];
   const slot = slotLine(data);
   const firstName = data.name.split(" ")[0] || data.name;
   const confirmed = status === "confirmed";
 
   const heading = confirmed
-    ? "Your viewing is confirmed"
-    : "Your viewing request was cancelled";
+    ? `Your ${noun} is confirmed`
+    : `Your ${noun} request was cancelled`;
 
   const intro = confirmed
-    ? `${firstName}, we look forward to welcoming you to the showroom. Your appointment is set for the slot below.`
+    ? `${firstName}, we look forward to welcoming you to the showroom. Your ${noun} is set for the slot below.`
     : `${firstName}, we are sorry that we could not hold this slot for you. Reply to this email or call us and we will gladly arrange another time.`;
 
   const html = layout({
-    preheader: confirmed ? `Confirmed for ${slot}.` : "Your viewing request was cancelled.",
+    preheader: confirmed ? `Confirmed for ${slot}.` : `Your ${noun} request was cancelled.`,
     heading,
     intro,
     bodyHtml:
@@ -235,8 +241,8 @@ export function appointmentStatusEmail(
           detailRow("Phone", data.phone)
       ) +
       button(
-        confirmed ? `${getSiteUrl()}/contact-us` : `${getSiteUrl()}/book-appointment`,
-        confirmed ? "Get Directions" : "Request Another Time"
+        confirmed ? `${getSiteUrl()}/360-view` : `${getSiteUrl()}${path}`,
+        confirmed ? "See the Showroom" : "Request Another Time"
       ),
     footerNote: confirmed ? "Need to reschedule? Just reply to this email." : undefined,
   });
@@ -253,8 +259,8 @@ export function appointmentStatusEmail(
 
   return {
     subject: confirmed
-      ? `Your viewing is confirmed - ${SITE.name}`
-      : `About your viewing request - ${SITE.name}`,
+      ? `Your ${noun} is confirmed - ${SITE.name}`
+      : `About your ${noun} request - ${SITE.name}`,
     html,
     text,
   };

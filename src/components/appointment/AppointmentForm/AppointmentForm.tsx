@@ -3,14 +3,21 @@
 import { useActionState, type MouseEvent } from "react";
 import {
   bookAppointmentAction,
+  bookTestDriveAction,
   type AppointmentActionState,
 } from "@/app/actions/appointment";
 import { Button } from "@/components/common/Button";
 import { Spinner } from "@/components/common/Spinner";
+import { BOOKINGS, type BookingKind } from "@/lib/bookings";
 import { SITE } from "@/data/site";
 import styles from "./AppointmentForm.module.css";
 
 const initialState: AppointmentActionState | null = null;
+
+const ACTIONS = {
+  appointment: bookAppointmentAction,
+  test_drive: bookTestDriveAction,
+} as const;
 
 /**
  * Opens a date or time field's native picker from a click anywhere on it.
@@ -31,23 +38,27 @@ function openPicker(event: MouseEvent<HTMLInputElement>) {
   }
 }
 
-export function AppointmentForm() {
-  const [state, formAction, isPending] = useActionState(
-    bookAppointmentAction,
-    initialState
-  );
+/**
+ * The public booking form, shared by appointments and test drives.
+ *
+ * Only the wording and the server action differ between the two, so `kind`
+ * carries both rather than the page owning a second copy of the form.
+ */
+export function AppointmentForm({ kind = "appointment" }: { kind?: BookingKind }) {
+  const [state, formAction, isPending] = useActionState(ACTIONS[kind], initialState);
+  const { title, noun } = BOOKINGS[kind];
 
-  // Nobody books a meeting in the past — the browser enforces it for us.
+  // Nobody books a slot in the past — the browser enforces it for us.
   const today = new Date().toISOString().slice(0, 10);
 
   return (
     <form action={formAction} className={styles.form}>
-      <h3 className={styles.heading}>Request a Meeting</h3>
+      <h3 className={styles.heading}>Request a {kind === "appointment" ? "Meeting" : title}</h3>
 
       <div className={styles.row}>
         <div className={styles.field}>
           <label className={styles.label} htmlFor="appointment-name">
-            Name
+            Name <span className={styles.required}>*</span>
           </label>
           <input
             id="appointment-name"
@@ -61,7 +72,7 @@ export function AppointmentForm() {
 
         <div className={styles.field}>
           <label className={styles.label} htmlFor="appointment-email">
-            Email
+            Email <span className={styles.required}>*</span>
           </label>
           <input
             id="appointment-email"
@@ -90,12 +101,13 @@ export function AppointmentForm() {
 
         <div className={styles.field}>
           <label className={styles.label} htmlFor="appointment-date">
-            Preferred Date
+            Preferred Date <span className={styles.required}>*</span>
           </label>
           <input
             id="appointment-date"
             name="preferred_date"
             type="date"
+            required
             min={today}
             className={styles.input}
             onClick={openPicker}
@@ -104,12 +116,13 @@ export function AppointmentForm() {
 
         <div className={styles.field}>
           <label className={styles.label} htmlFor="appointment-time">
-            Preferred Time
+            Preferred Time <span className={styles.required}>*</span>
           </label>
           <input
             id="appointment-time"
             name="preferred_time"
             type="time"
+            required
             className={styles.input}
             onClick={openPicker}
           />
@@ -124,19 +137,23 @@ export function AppointmentForm() {
           id="appointment-message"
           name="message"
           className={styles.textarea}
-          placeholder="Which vehicle would you like to see?"
+          placeholder={
+            kind === "test_drive"
+              ? "Which vehicle would you like to drive?"
+              : "Which vehicle would you like to see?"
+          }
         />
       </div>
 
       {state?.success && (
         <p className={`${styles.feedback} ${styles.success}`}>
-          Thank you — your request is in. We&apos;ll email you to confirm the time.
+          Thank you — your {noun} request is in. We&apos;ll email you to confirm the time.
         </p>
       )}
       {state?.error && <p className={`${styles.feedback} ${styles.error}`}>{state.error}</p>}
 
       <Button type="submit" disabled={isPending} fullWidth>
-        {isPending ? <Spinner /> : "Book Appointment"}
+        {isPending ? <Spinner /> : `Book ${title}`}
       </Button>
     </form>
   );

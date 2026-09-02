@@ -1,1 +1,0 @@
-export { InquiryForm } from "./InquiryForm";

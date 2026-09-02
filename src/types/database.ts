@@ -239,43 +239,41 @@ export interface Database {
         };
         Relationships: [];
       };
-      inquiries: {
+      test_drives: {
         Row: {
           id: string;
-          car_id: string | null;
           name: string;
           email: string;
           phone: string | null;
+          preferred_date: string | null;
+          preferred_time: string | null;
           message: string | null;
+          status: AppointmentStatus;
           created_at: string;
         };
         Insert: {
           id?: string;
-          car_id?: string | null;
           name: string;
           email: string;
           phone?: string | null;
+          preferred_date?: string | null;
+          preferred_time?: string | null;
           message?: string | null;
+          status?: AppointmentStatus;
           created_at?: string;
         };
         Update: {
           id?: string;
-          car_id?: string | null;
           name?: string;
           email?: string;
           phone?: string | null;
+          preferred_date?: string | null;
+          preferred_time?: string | null;
           message?: string | null;
+          status?: AppointmentStatus;
           created_at?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: "inquiries_car_id_fkey";
-            columns: ["car_id"];
-            isOneToOne: false;
-            referencedRelation: "cars";
-            referencedColumns: ["id"];
-          },
-        ];
+        Relationships: [];
       };
       tour_scenes: {
         Row: {

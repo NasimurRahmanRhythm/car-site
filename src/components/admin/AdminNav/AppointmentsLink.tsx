@@ -2,20 +2,29 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getPendingAppointmentCountAction } from "@/app/actions/appointment";
+import { getPendingBookingCountAction } from "@/app/actions/appointment";
+import { BOOKINGS, type BookingKind } from "@/lib/bookings";
 import styles from "./AdminNav.module.css";
 
 /** How often to re-check while the tab is open. */
 const POLL_MS = 60_000;
 
 /**
- * The Appointments nav link with a live count of unactioned requests.
+ * A booking nav link with a live count of unactioned requests.
  *
  * Server-rendered first (via `initialCount`) so there is no flash of a missing
  * badge, then kept current on the client — new requests come from visitors, so
  * nothing on the admin's side would otherwise trigger a re-render.
  */
-export function AppointmentsLink({ initialCount }: { initialCount: number }) {
+export function AppointmentsLink({
+  kind,
+  label,
+  initialCount,
+}: {
+  kind: BookingKind;
+  label: string;
+  initialCount: number;
+}) {
   const [count, setCount] = useState(initialCount);
   const [lastServerCount, setLastServerCount] = useState(initialCount);
 
@@ -33,7 +42,7 @@ export function AppointmentsLink({ initialCount }: { initialCount: number }) {
 
     const refresh = async () => {
       try {
-        const next = await getPendingAppointmentCountAction();
+        const next = await getPendingBookingCountAction(kind);
         if (!cancelled) setCount(next);
       } catch {
         // Offline or a dropped request — keep the last known count and let the
@@ -55,16 +64,16 @@ export function AppointmentsLink({ initialCount }: { initialCount: number }) {
       clearInterval(interval);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, []);
+  }, [kind]);
 
   return (
-    <Link href="/admin/appointments" className={styles.link}>
-      Appointments
+    <Link href={BOOKINGS[kind].adminPath} className={styles.link}>
+      {label}
       {count > 0 && (
         <span
           className={styles.badge}
           // The number alone reads as "12" to a screen reader; spell it out.
-          aria-label={`${count} new appointment ${count === 1 ? "request" : "requests"}`}
+          aria-label={`${count} new ${BOOKINGS[kind].noun} ${count === 1 ? "request" : "requests"}`}
         >
           {count > 99 ? "99+" : count}
         </span>

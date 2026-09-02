@@ -4,23 +4,23 @@ import { getAllBookings } from "@/lib/services/booking.service";
 import styles from "../admin.module.css";
 
 export const metadata: Metadata = {
-  title: "Appointments",
+  title: "Test Drives",
 };
 
-export default async function AdminAppointmentsPage() {
-  const appointments = await getAllBookings("appointment");
-  const pending = appointments.filter((item) => item.status === "pending").length;
+export default async function AdminTestDrivesPage() {
+  const testDrives = await getAllBookings("test_drive");
+  const pending = testDrives.filter((item) => item.status === "pending").length;
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        <h1 className={styles.heading}>Appointments</h1>
+        <h1 className={styles.heading}>Test Drives</h1>
         <span className={styles.headerNote}>
-          {pending} pending of {appointments.length}
+          {pending} pending of {testDrives.length}
         </span>
       </div>
 
-      <AppointmentTable kind="appointment" appointments={appointments} />
+      <AppointmentTable kind="test_drive" appointments={testDrives} />
     </div>
   );
 }

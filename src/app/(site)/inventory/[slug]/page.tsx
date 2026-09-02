@@ -6,7 +6,7 @@ import { Badge } from "@/components/common/Badge";
 import { CarGallery } from "@/components/car-detail/CarGallery";
 import { CarSpecTable } from "@/components/car-detail/CarSpecTable";
 import { CarFeatures } from "@/components/car-detail/CarFeatures";
-import { InquiryForm } from "@/components/car-detail/InquiryForm";
+import { CarBookingPanel } from "@/components/car-detail/CarBookingPanel";
 import { SimilarCars } from "@/components/car-detail/SimilarCars";
 import { getCarBySlug, getSimilarCars } from "@/lib/services/car.service";
 import { CAR_STATUS_LABELS } from "@/lib/constants";
@@ -85,7 +85,7 @@ export default async function CarDetailPage({ params }: PageProps<"/inventory/[s
             </div>
 
             <div>
-              <InquiryForm carId={car.id} carName={displayName} />
+              <CarBookingPanel carName={displayName} />
             </div>
           </div>
         </div>

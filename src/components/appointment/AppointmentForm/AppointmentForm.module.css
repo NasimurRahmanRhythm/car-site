@@ -84,3 +84,8 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* Marks the fields the form will not submit without. */
+.required {
+  color: var(--color-accent);
+}

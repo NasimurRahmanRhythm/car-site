@@ -40,3 +40,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# agent instruction files — `next dev` regenerates these at the root on every
+# run; the copies that are kept live in docs/
+/AGENTS.md
+/CLAUDE.md

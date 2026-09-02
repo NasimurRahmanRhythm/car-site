@@ -19,8 +19,8 @@ export function ContactCta() {
             <a href={`tel:${SITE.phone.replace(/\s+/g, "")}`} className={styles.phone}>
               {SITE.phoneDisplay}
             </a>
-            <Button href="/contact-us" variant="secondary">
-              Contact Us
+            <Button href="/book-appointment" variant="secondary">
+              Book an Appointment
             </Button>
           </div>
         </div>

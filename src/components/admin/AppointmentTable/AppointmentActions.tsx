@@ -2,17 +2,20 @@
 
 import { useTransition } from "react";
 import {
-  deleteAppointmentAction,
-  setAppointmentStatusAction,
+  deleteBookingAction,
+  setBookingStatusAction,
 } from "@/app/actions/appointment";
+import type { BookingKind } from "@/lib/bookings";
 import { ConfirmDeleteButton } from "@/components/common/ConfirmDialog";
 import type { AppointmentStatus } from "@/types/appointment";
 import styles from "./AppointmentTable.module.css";
 
 export function AppointmentActions({
+  kind,
   id,
   status,
 }: {
+  kind: BookingKind;
   id: string;
   status: AppointmentStatus;
 }) {
@@ -25,7 +28,7 @@ export function AppointmentActions({
           type="button"
           className="admin-action admin-action-solid"
           disabled={isPending}
-          onClick={() => startTransition(() => setAppointmentStatusAction(id, "confirmed"))}
+          onClick={() => startTransition(() => setBookingStatusAction(kind, id, "confirmed"))}
         >
           Confirm
         </button>
@@ -35,7 +38,7 @@ export function AppointmentActions({
           type="button"
           className="admin-action"
           disabled={isPending}
-          onClick={() => startTransition(() => setAppointmentStatusAction(id, "cancelled"))}
+          onClick={() => startTransition(() => setBookingStatusAction(kind, id, "cancelled"))}
         >
           Cancel
         </button>
@@ -43,7 +46,7 @@ export function AppointmentActions({
       <ConfirmDeleteButton
         title="Delete this request?"
         message="This cannot be undone."
-        onConfirm={() => deleteAppointmentAction(id)}
+        onConfirm={() => deleteBookingAction(kind, id)}
       />
     </div>
   );

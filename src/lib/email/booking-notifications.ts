@@ -1,10 +1,11 @@
 import "server-only";
 import { SITE } from "@/data/site";
+import { BOOKINGS, type BookingKind } from "@/lib/bookings";
 import { sendEmail } from "./client";
 import {
-  appointmentReceivedEmail,
-  appointmentStatusEmail,
-  type AppointmentEmailData,
+  bookingReceivedEmail,
+  bookingStatusEmail,
+  type BookingEmailData,
 } from "./templates";
 
 /**
@@ -28,14 +29,15 @@ async function trySend(
  * Acknowledges a new request to the visitor who made it.
  *
  * Nothing goes to the showroom here on purpose — staff learn about new requests
- * from the badge in the admin nav, not from an inbox.
+ * from the badges in the admin nav, not from an inbox.
  */
-export async function sendAppointmentReceiptEmail(
-  data: AppointmentEmailData
+export async function sendBookingReceiptEmail(
+  kind: BookingKind,
+  data: BookingEmailData
 ): Promise<void> {
-  const email = appointmentReceivedEmail(data);
+  const email = bookingReceivedEmail(kind, data);
 
-  await trySend("Appointment receipt", () =>
+  await trySend(`${BOOKINGS[kind].title} receipt`, () =>
     sendEmail({
       to: data.email,
       subject: email.subject,
@@ -47,14 +49,20 @@ export async function sendAppointmentReceiptEmail(
   );
 }
 
-/** Tells the visitor an admin has confirmed or cancelled their request. */
-export async function sendAppointmentStatusEmail(
-  data: AppointmentEmailData,
+/**
+ * Tells the visitor an admin has confirmed or cancelled their request.
+ *
+ * It goes to the address they gave when booking — the row is read back before
+ * the update precisely so this still has it.
+ */
+export async function sendBookingStatusEmail(
+  kind: BookingKind,
+  data: BookingEmailData,
   status: "confirmed" | "cancelled"
 ): Promise<void> {
-  const email = appointmentStatusEmail(data, status);
+  const email = bookingStatusEmail(kind, data, status);
 
-  await trySend(`Appointment ${status} notice`, () =>
+  await trySend(`${BOOKINGS[kind].title} ${status} notice`, () =>
     sendEmail({
       to: data.email,
       subject: email.subject,

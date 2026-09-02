@@ -1,12 +1,15 @@
 import Link from "next/link";
 import { signOutAction } from "@/app/actions/auth";
-import { getPendingAppointmentCount } from "@/lib/services/admin.service";
+import { getPendingBookingCount } from "@/lib/services/booking.service";
 import { SITE } from "@/data/site";
 import { AppointmentsLink } from "./AppointmentsLink";
 import styles from "./AdminNav.module.css";
 
 export async function AdminNav() {
-  const pendingAppointments = await getPendingAppointmentCount();
+  const [pendingAppointments, pendingTestDrives] = await Promise.all([
+    getPendingBookingCount("appointment"),
+    getPendingBookingCount("test_drive"),
+  ]);
 
   return (
     <nav className={styles.nav}>
@@ -24,7 +27,16 @@ export async function AdminNav() {
         <Link href="/admin/360-view" className={styles.link}>
           360&deg; View
         </Link>
-        <AppointmentsLink initialCount={pendingAppointments} />
+        <AppointmentsLink
+          kind="appointment"
+          label="Appointments"
+          initialCount={pendingAppointments}
+        />
+        <AppointmentsLink
+          kind="test_drive"
+          label="Test Drives"
+          initialCount={pendingTestDrives}
+        />
         <Link href="/admin/cars/new" className={styles.link}>
           Add Vehicle
         </Link>

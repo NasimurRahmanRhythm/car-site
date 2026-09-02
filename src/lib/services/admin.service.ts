@@ -1,11 +1,8 @@
-import { after } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { sendAppointmentStatusEmail } from "@/lib/email/appointment-notifications";
 import { slugify } from "@/lib/utils";
 import type { Database } from "@/types/database";
 import type { CarWithImages } from "@/types/car";
 import type { NewsPost } from "@/types/news";
-import type { Appointment, AppointmentStatus } from "@/types/appointment";
 
 export type CarInput = Database["public"]["Tables"]["cars"]["Insert"];
 export type CarUpdate = Database["public"]["Tables"]["cars"]["Update"];
@@ -380,109 +377,5 @@ export async function deleteNews(id: string): Promise<{ success: boolean; error?
   }
 
   await removeNewsImage(existing?.image_path ?? null);
-  return { success: true };
-}
-
-/* ---------------------------------------------------------- Appointments */
-
-export async function getAllAppointments(): Promise<Appointment[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("appointments")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("getAllAppointments failed:", error.message);
-    return [];
-  }
-
-  return data ?? [];
-}
-
-/**
- * How many requests nobody has actioned yet — the number on the nav badge.
- *
- * `head: true` asks Postgres for the count without shipping any rows, which
- * matters because the admin nav polls this on a timer.
- */
-export async function getPendingAppointmentCount(): Promise<number> {
-  const supabase = await createClient();
-  const { count, error } = await supabase
-    .from("appointments")
-    .select("id", { count: "exact", head: true })
-    .eq("status", "pending");
-
-  if (error) {
-    // A badge is not worth breaking the whole admin shell over.
-    console.error("getPendingAppointmentCount failed:", error.message);
-    return 0;
-  }
-
-  return count ?? 0;
-}
-
-export async function setAppointmentStatus(
-  id: string,
-  status: AppointmentStatus
-): Promise<{ success: boolean; error?: string }> {
-  const supabase = await createClient();
-
-  // Read before writing: the customer's details are needed for the email, and
-  // the old status tells us whether this is a real change. A stale admin tab
-  // could otherwise re-send a confirmation the customer already has.
-  const { data: existing, error: readError } = await supabase
-    .from("appointments")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
-
-  if (readError) {
-    console.error("setAppointmentStatus lookup failed:", readError.message);
-    return { success: false, error: readError.message };
-  }
-
-  if (!existing) {
-    return { success: false, error: "Appointment not found." };
-  }
-
-  const { error } = await supabase.from("appointments").update({ status }).eq("id", id);
-
-  if (error) {
-    console.error("setAppointmentStatus failed:", error.message);
-    return { success: false, error: error.message };
-  }
-
-  // "pending" is the initial state, not something a customer needs told about.
-  if (existing.status !== status && status !== "pending") {
-    after(async () => {
-      await sendAppointmentStatusEmail(
-        {
-          name: existing.name,
-          email: existing.email,
-          phone: existing.phone,
-          preferredDate: existing.preferred_date,
-          preferredTime: existing.preferred_time,
-          message: existing.message,
-        },
-        status
-      );
-    });
-  }
-
-  return { success: true };
-}
-
-export async function deleteAppointment(
-  id: string
-): Promise<{ success: boolean; error?: string }> {
-  const supabase = await createClient();
-  const { error } = await supabase.from("appointments").delete().eq("id", id);
-
-  if (error) {
-    console.error("deleteAppointment failed:", error.message);
-    return { success: false, error: error.message };
-  }
-
   return { success: true };
 }

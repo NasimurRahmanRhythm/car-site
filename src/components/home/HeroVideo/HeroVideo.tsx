@@ -118,6 +118,9 @@ export function HeroVideo() {
           <Button href="/book-appointment" variant="secondary">
             Book an Appointment
           </Button>
+          <Button href="/book-test-drive" variant="secondary">
+            Book a Test Drive
+          </Button>
         </div>
       </div>
 

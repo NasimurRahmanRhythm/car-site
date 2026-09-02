@@ -1,7 +1,8 @@
 import { Badge } from "@/components/common/Badge";
 import { formatDate } from "@/lib/utils";
 import { APPOINTMENT_STATUS_LABELS } from "@/lib/constants";
-import type { Appointment } from "@/types/appointment";
+import { BOOKINGS, type BookingKind } from "@/lib/bookings";
+import type { BookingRequest } from "@/types/appointment";
 import { AppointmentActions } from "./AppointmentActions";
 import styles from "./AppointmentTable.module.css";
 
@@ -11,9 +12,17 @@ const STATUS_VARIANT = {
   cancelled: "sold",
 } as const;
 
-export function AppointmentTable({ appointments }: { appointments: Appointment[] }) {
+export function AppointmentTable({
+  kind,
+  appointments,
+}: {
+  kind: BookingKind;
+  appointments: BookingRequest[];
+}) {
   if (appointments.length === 0) {
-    return <div className={styles.empty}>No appointment requests yet.</div>;
+    return (
+      <div className={styles.empty}>No {BOOKINGS[kind].noun} requests yet.</div>
+    );
   }
 
   return (
@@ -59,7 +68,8 @@ export function AppointmentTable({ appointments }: { appointments: Appointment[]
                 </Badge>
               </td>
               <td>
-                <AppointmentActions id={appointment.id} status={appointment.status} />
+                <AppointmentActions
+                  kind={kind} id={appointment.id} status={appointment.status} />
               </td>
             </tr>
           ))}
