@@ -10,17 +10,21 @@
   align-items: start;
 }
 
+/* All of the writing lives in one column, so the spacing between the heading
+   and the copy comes from here rather than from the grid gap. */
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}
+
 .heading {
   max-width: 20ch;
 }
 
-/* The heading alone left this column light next to the copy and stats, so the
-   photo anchors it. Its width is set to run out to the end of the heading's
-   longest line — "on Rare Machines", 16 characters of the display face at a
-   fixed 4rem, which lands a little under 28rem — so the two edges line up
-   instead of the photo stopping mid-word. */
 .portrait {
-  margin: var(--space-8) 0 0;
+  margin: 0;
   width: 100%;
   max-width: min(28rem, 100%);
   overflow: hidden;
@@ -64,8 +68,11 @@
 }
 
 @media (min-width: 1024px) {
+  /* The photo column is sized by the photo itself — its max-width caps what
+     `auto` can ask for — so the text keeps every pixel that is left rather
+     than an even half it does not need. */
   .layout {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: var(--space-12);
   }
 }

@@ -11,43 +11,45 @@ export function BrandStatement() {
     <section className={styles.section}>
       <Container>
         <div className={styles.layout}>
-          <div>
-            <span className="eyebrow">{ABOUT.eyebrow}</span>
-            <RevealText
-              as="h2"
-              lines={["A House Built", "on Rare Machines"]}
-              className={`display-2 ${styles.heading}`}
-            />
+          <div className={styles.text}>
+            <div>
+              <span className="eyebrow">{ABOUT.eyebrow}</span>
+              <RevealText
+                as="h2"
+                lines={["A House Built", "on Rare Machines"]}
+                className={`display-2 ${styles.heading}`}
+              />
+            </div>
 
             <RevealBlock>
-              <figure className={styles.portrait}>
-                <Image
-                  src={ABOUT.showroom.src}
-                  alt={ABOUT.showroom.alt}
-                  width={ABOUT.showroom.width}
-                  height={ABOUT.showroom.height}
-                  sizes="(min-width: 448px) 448px, 100vw"
-                  className={styles.portraitImage}
-                />
-              </figure>
+              <div className={styles.copy}>
+                <p className="body-lg">{ABOUT.intro}</p>
+
+                <div className={styles.stats}>
+                  {ABOUT.stats.map((stat) => (
+                    <div key={stat.label}>
+                      <div className={styles.statValue}>
+                        <CountUp value={stat.value} />
+                      </div>
+                      <div className={styles.statLabel}>{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </RevealBlock>
           </div>
 
           <RevealBlock>
-            <div className={styles.copy}>
-              <p className="body-lg">{ABOUT.intro}</p>
-
-              <div className={styles.stats}>
-                {ABOUT.stats.map((stat) => (
-                  <div key={stat.label}>
-                    <div className={styles.statValue}>
-                      <CountUp value={stat.value} />
-                    </div>
-                    <div className={styles.statLabel}>{stat.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <figure className={styles.portrait}>
+              <Image
+                src={ABOUT.showroom.src}
+                alt={ABOUT.showroom.alt}
+                width={ABOUT.showroom.width}
+                height={ABOUT.showroom.height}
+                sizes="(min-width: 448px) 448px, 100vw"
+                className={styles.portraitImage}
+              />
+            </figure>
           </RevealBlock>
         </div>
       </Container>
