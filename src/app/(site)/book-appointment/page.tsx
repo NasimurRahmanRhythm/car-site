@@ -8,7 +8,7 @@ import styles from "./appointment.module.css";
 export const metadata: Metadata = {
   title: "Book an Appointment",
   description:
-    "Reserve a private viewing at the showroom — pick a date and time and we'll confirm by email.",
+    "Reserve a private meeting at the showroom — pick a date and time and we'll confirm by email.",
 };
 
 export default function BookAppointmentPage() {
@@ -16,7 +16,7 @@ export default function BookAppointmentPage() {
     <Container>
       <div className={styles.wrapper}>
         <SectionHeading
-          eyebrow="Private Viewing"
+          eyebrow="Private Meeting"
           heading="Book an Appointment"
           description="Tell us when suits you and leave your email — we'll confirm the slot and have the vehicle ready when you arrive."
         />

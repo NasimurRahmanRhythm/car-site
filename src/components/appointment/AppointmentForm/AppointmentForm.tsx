@@ -1,15 +1,35 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, type MouseEvent } from "react";
 import {
   bookAppointmentAction,
   type AppointmentActionState,
 } from "@/app/actions/appointment";
 import { Button } from "@/components/common/Button";
 import { Spinner } from "@/components/common/Spinner";
+import { SITE } from "@/data/site";
 import styles from "./AppointmentForm.module.css";
 
 const initialState: AppointmentActionState | null = null;
+
+/**
+ * Opens a date or time field's native picker from a click anywhere on it.
+ *
+ * Left alone, most browsers only open it from the small icon at the right
+ * edge, so clicking the field looks like nothing happened. `showPicker` is
+ * missing on older browsers and throws when the browser declines it, and in
+ * both cases the field is still typeable — so failure here is silent by design.
+ */
+function openPicker(event: MouseEvent<HTMLInputElement>) {
+  const input = event.currentTarget;
+  if (typeof input.showPicker !== "function") return;
+
+  try {
+    input.showPicker();
+  } catch {
+    // Declined by the browser; typing into the field still works.
+  }
+}
 
 export function AppointmentForm() {
   const [state, formAction, isPending] = useActionState(
@@ -17,12 +37,12 @@ export function AppointmentForm() {
     initialState
   );
 
-  // Nobody books a viewing in the past — the browser enforces it for us.
+  // Nobody books a meeting in the past — the browser enforces it for us.
   const today = new Date().toISOString().slice(0, 10);
 
   return (
     <form action={formAction} className={styles.form}>
-      <h3 className={styles.heading}>Request a Viewing</h3>
+      <h3 className={styles.heading}>Request a Meeting</h3>
 
       <div className={styles.row}>
         <div className={styles.field}>
@@ -35,6 +55,7 @@ export function AppointmentForm() {
             type="text"
             required
             className={styles.input}
+            placeholder="Your full name"
           />
         </div>
 
@@ -58,7 +79,13 @@ export function AppointmentForm() {
           <label className={styles.label} htmlFor="appointment-phone">
             Phone
           </label>
-          <input id="appointment-phone" name="phone" type="tel" className={styles.input} />
+          <input
+            id="appointment-phone"
+            name="phone"
+            type="tel"
+            className={styles.input}
+            placeholder={SITE.phoneDisplay}
+          />
         </div>
 
         <div className={styles.field}>
@@ -71,6 +98,7 @@ export function AppointmentForm() {
             type="date"
             min={today}
             className={styles.input}
+            onClick={openPicker}
           />
         </div>
 
@@ -83,6 +111,7 @@ export function AppointmentForm() {
             name="preferred_time"
             type="time"
             className={styles.input}
+            onClick={openPicker}
           />
         </div>
       </div>

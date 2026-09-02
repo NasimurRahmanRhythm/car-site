@@ -115,8 +115,8 @@ export function HeroVideo() {
         </p>
         <div className={styles.ctas}>
           <Button href="/inventory">Explore Inventory</Button>
-          <Button href="/contact-us" variant="secondary">
-            Book a Visit
+          <Button href="/book-appointment" variant="secondary">
+            Book an Appointment
           </Button>
         </div>
       </div>
