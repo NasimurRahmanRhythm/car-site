@@ -1,7 +1,14 @@
+/* The display sizes are clamped rather than fixed. RevealText masks each line
+   with `overflow: hidden`, so a single word wider than its container is cut
+   off instead of wrapping — at the full sizes that happens on a phone to words
+   like "Machines", "Appointment" and "Dealerships". Each clamp reaches its
+   original size well before the desktop breakpoints, so wide layouts are
+   unchanged. */
 .display-1 {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: var(--text-6xl);
+  /* Full size from ~800px wide. */
+  font-size: clamp(3.25rem, 11vw, var(--text-6xl));
   line-height: 1.02;
   letter-spacing: -0.01em;
 }
@@ -9,7 +16,8 @@
 .display-2 {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: var(--text-5xl);
+  /* Full size from ~640px wide. */
+  font-size: clamp(3rem, 10vw, var(--text-5xl));
   line-height: 1.05;
   letter-spacing: -0.01em;
 }

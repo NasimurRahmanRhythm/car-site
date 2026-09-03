@@ -26,8 +26,8 @@
   gap: var(--space-4);
 }
 
-/* Same reason as the page heading: "Mercedes-Benz" is too wide for display-2
-   next to the index column on a narrow screen. */
+/* Tighter than the global display-2 clamp: the index column and its gap take
+   width off this heading, so "Mercedes-Benz" still overflows at that size. */
 .marque {
   display: flex;
   flex-wrap: wrap;

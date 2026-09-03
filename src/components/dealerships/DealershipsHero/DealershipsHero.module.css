@@ -2,13 +2,9 @@
   padding-block: var(--space-16) var(--space-10);
 }
 
-/* "Dealerships" is wider than display-1 leaves room for on a phone, and
-   RevealText clips its lines rather than breaking mid-word — so the size
-   scales with the viewport instead of overflowing. */
 .heading {
   max-width: 24ch;
   margin-top: var(--space-4);
-  font-size: clamp(var(--text-4xl), 11vw, var(--text-6xl));
 }
 
 .intro {

@@ -56,9 +56,9 @@
   margin-inline: auto;
 }
 
-/* display-1 is sized for desktop. Held at 5.5rem the three lines each wrap in
-   two on a phone, and the block grows taller than the viewport — so it scales
-   with the viewport width up to the full size. */
+/* Tighter than the global display-1 clamp: this heading has to fit the
+   viewport vertically as well, sharing it with the eyebrow, tagline and three
+   CTAs. At larger sizes its three lines wrap into five and overflow. */
 .heading {
   max-width: 16ch;
   font-size: clamp(2.75rem, 11vw, var(--text-6xl));
