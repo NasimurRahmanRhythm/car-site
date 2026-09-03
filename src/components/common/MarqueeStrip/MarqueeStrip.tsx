@@ -18,33 +18,34 @@ const BRANDS = [
   "porsche",
 ] as const;
 
-/** Car logos between one wordmark and the next. */
-const BRANDS_PER_WORDMARK = 4;
+/**
+ * Units in one run. A unit is the whole brand list followed by the house
+ * wordmark, so every marque is seen once between one VIP Motors mark and the
+ * next. The track holds two identical runs and slides by exactly one of them,
+ * so a run has to stay wider than the viewport or a gap opens at the trailing
+ * edge — four units clears an ultrawide desktop.
+ */
+const UNITS_PER_RUN = 4;
 
 /**
  * How long the track takes to travel one full run. The run is long, so this is
  * a pace rather than a per-item duration.
  */
-const SECONDS_PER_RUN = 90;
+const SECONDS_PER_RUN = 120;
 
 type Item = { kind: "brand"; slug: string } | { kind: "wordmark" };
 
 /**
- * One run of the strip.
- *
- * The nine brands are dealt out in groups of four with a wordmark after each
- * group, and the run is exactly long enough for both cycles to close at the
- * same point — nine brands into groups of four takes 36 logos, which is four
- * whole passes of the brand list and nine wordmarks. Ending on a boundary is
- * what lets the second copy of the run start identically, so the -50% loop has
- * no visible jump.
+ * One run of the strip: the unit above, repeated. Every run is built from whole
+ * units, so the second copy starts on exactly the same item as the first and
+ * the -50% loop has no visible jump.
  */
 function buildRun(): Item[] {
   const items: Item[] = [];
 
-  for (let index = 0; index < BRANDS.length * BRANDS_PER_WORDMARK; index++) {
-    items.push({ kind: "brand", slug: BRANDS[index % BRANDS.length] });
-    if ((index + 1) % BRANDS_PER_WORDMARK === 0) items.push({ kind: "wordmark" });
+  for (let unit = 0; unit < UNITS_PER_RUN; unit++) {
+    for (const slug of BRANDS) items.push({ kind: "brand", slug });
+    items.push({ kind: "wordmark" });
   }
 
   return items;
