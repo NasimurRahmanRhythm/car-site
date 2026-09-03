@@ -4,6 +4,7 @@ import { FeaturedCars } from "@/components/home/FeaturedCars";
 import { BrandStatement } from "@/components/home/BrandStatement";
 import { CategoryStrip } from "@/components/home/CategoryStrip";
 import { NewsStrip } from "@/components/home/NewsStrip";
+import { DealershipStrip } from "@/components/home/DealershipStrip";
 import { StoreMap } from "@/components/home/StoreMap";
 import { ContactCta } from "@/components/home/ContactCta";
 import { MarqueeStrip } from "@/components/common/MarqueeStrip";
@@ -29,6 +30,7 @@ export default async function HomePage() {
         <CategoryStrip />
         <NewsStrip posts={latestNews} />
       </div>
+      <DealershipStrip />
       <StoreMap />
       <ContactCta />
     </>

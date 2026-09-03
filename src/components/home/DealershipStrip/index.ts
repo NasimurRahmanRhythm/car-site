@@ -1,0 +1,1 @@
+export { DealershipStrip } from "./DealershipStrip";

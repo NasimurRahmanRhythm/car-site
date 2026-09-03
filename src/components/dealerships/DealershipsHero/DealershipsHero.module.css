@@ -1,0 +1,53 @@
+.hero {
+  padding-block: var(--space-16) var(--space-10);
+}
+
+/* "Dealerships" is wider than display-1 leaves room for on a phone, and
+   RevealText clips its lines rather than breaking mid-word — so the size
+   scales with the viewport instead of overflowing. */
+.heading {
+  max-width: 24ch;
+  margin-top: var(--space-4);
+  font-size: clamp(var(--text-4xl), 11vw, var(--text-6xl));
+}
+
+.intro {
+  max-width: 62ch;
+  margin-top: var(--space-6);
+}
+
+.jumpLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+}
+
+.jumpLink {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-black-soft);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-white);
+  transition: border-color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.jumpLink:hover,
+.jumpLink:focus-visible {
+  border-color: var(--color-line-strong);
+  background: var(--color-black-elevated);
+}
+
+.jumpSegment {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-white-muted);
+}
