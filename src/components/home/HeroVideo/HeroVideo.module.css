@@ -1,7 +1,10 @@
 .hero {
   position: relative;
-  height: 100svh;
-  min-height: 560px;
+  /* min-height rather than a fixed height: the copy is pinned to the bottom
+     and the section clips, so anything taller than the viewport (a small
+     phone, a large accessibility font size) would be cut off the top edge.
+     This lets the hero grow instead. */
+  min-height: max(100svh, 560px);
   display: flex;
   align-items: flex-end;
   overflow: hidden;
@@ -53,8 +56,12 @@
   margin-inline: auto;
 }
 
+/* display-1 is sized for desktop. Held at 5.5rem the three lines each wrap in
+   two on a phone, and the block grows taller than the viewport — so it scales
+   with the viewport width up to the full size. */
 .heading {
   max-width: 16ch;
+  font-size: clamp(2.75rem, 11vw, var(--text-6xl));
 }
 
 .tagline {
