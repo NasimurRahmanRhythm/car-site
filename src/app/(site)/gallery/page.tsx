@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/components/common/Container";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { GalleryGrid } from "@/components/gallery/GalleryGrid";
-import { getGalleryImages } from "@/lib/services/car.service";
+import { getGalleryEntries } from "@/lib/services/gallery.service";
 import styles from "./gallery.module.css";
 
 export const metadata: Metadata = {
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function GalleryPage() {
-  const images = await getGalleryImages(60);
+  const entries = await getGalleryEntries(60);
 
   return (
     <Container>
@@ -19,10 +19,10 @@ export default async function GalleryPage() {
         <SectionHeading
           eyebrow="The Collection"
           heading="Gallery"
-          description="A rotating look through the cars on our floor. Tap any photo to open the vehicle."
+          description="A rotating look through the showroom and the cars on our floor. Tap any vehicle photo to open its listing."
         />
 
-        <GalleryGrid images={images} />
+        <GalleryGrid entries={entries} />
       </div>
     </Container>
   );

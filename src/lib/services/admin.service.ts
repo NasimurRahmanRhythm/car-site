@@ -293,6 +293,44 @@ async function uploadNewsImage(file: File): Promise<NewsImageUpload> {
   return { url: publicUrl, path: storagePath };
 }
 
+/**
+ * A photo or clip dropped into a post's body from the editor.
+ *
+ * Unlike the cover image there is no row to hang it off — the file is
+ * referenced only by the `<img>`/`<video>` the editor writes into the post's
+ * HTML — so it lives under its own prefix and is left in place when the post is
+ * deleted rather than tracked and swept.
+ */
+export async function uploadNewsMedia(
+  file: File
+): Promise<{ url?: string; error?: string }> {
+  const isImage = file.type.startsWith("image/");
+  const isVideo = file.type.startsWith("video/");
+
+  if (!isImage && !isVideo) {
+    return { error: "Only images and videos can be added to a post." };
+  }
+
+  const supabase = await createClient();
+  const extension = file.name.split(".").pop()?.toLowerCase() || (isImage ? "jpg" : "mp4");
+  const storagePath = `content/${crypto.randomUUID()}.${extension}`;
+
+  const { error } = await supabase.storage
+    .from(NEWS_IMAGES_BUCKET)
+    .upload(storagePath, file, { contentType: file.type, upsert: false });
+
+  if (error) {
+    console.error("uploadNewsMedia failed:", error.message);
+    return { error: error.message };
+  }
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(NEWS_IMAGES_BUCKET).getPublicUrl(storagePath);
+
+  return { url: publicUrl };
+}
+
 async function removeNewsImage(storagePath: string | null): Promise<void> {
   if (!storagePath) return;
   const supabase = await createClient();

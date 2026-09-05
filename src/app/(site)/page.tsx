@@ -10,13 +10,15 @@ import { ContactCta } from "@/components/home/ContactCta";
 import { MarqueeStrip } from "@/components/common/MarqueeStrip";
 import { getFeaturedCars, getFilterOptions } from "@/lib/services/car.service";
 import { getLatestNews } from "@/lib/services/news.service";
+import { getAboutContent } from "@/lib/services/about.service";
 import styles from "./page.module.css";
 
 export default async function HomePage() {
-  const [featuredCars, filterOptions, latestNews] = await Promise.all([
+  const [featuredCars, filterOptions, latestNews, about] = await Promise.all([
     getFeaturedCars(3),
     getFilterOptions(),
     getLatestNews(5),
+    getAboutContent(),
   ]);
 
   return (
@@ -25,7 +27,7 @@ export default async function HomePage() {
       <InventorySearch makes={filterOptions.makes} />
       <FeaturedCars cars={featuredCars} />
       <MarqueeStrip />
-      <BrandStatement />
+      <BrandStatement about={about} />
       <div className={styles.backdrop}>
         <CategoryStrip />
         <NewsStrip posts={latestNews} />

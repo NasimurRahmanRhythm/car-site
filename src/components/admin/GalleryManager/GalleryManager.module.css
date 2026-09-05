@@ -1,0 +1,164 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--color-black-soft);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+}
+
+.panelHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.panelTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-white);
+}
+
+.meta,
+.hint {
+  font-size: var(--text-xs);
+  color: var(--color-white-muted);
+  letter-spacing: var(--tracking-wide);
+}
+
+.hint {
+  max-width: 60ch;
+  line-height: 1.6;
+}
+
+.empty {
+  padding-block: var(--space-6);
+  color: var(--color-white-muted);
+  font-size: var(--text-sm);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-black-elevated);
+}
+
+/* A video fills the same frame as a photo, controls and all. */
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--color-black);
+}
+
+.kindBadge {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 1;
+}
+
+.caption {
+  font-size: var(--text-xs);
+  color: var(--color-white-muted);
+}
+
+.captionText {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.captionForm {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.cardLink:hover {
+  color: var(--color-accent);
+}
+
+.cardActions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+/* --- Upload form ------------------------------------------------------ */
+
+.uploadForm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.captionField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+  max-width: 32rem;
+}
+
+.label {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-white-muted);
+}
+
+.input {
+  width: 100%;
+  min-width: 0;
+  height: 2.5rem;
+  padding-inline: var(--space-3);
+  background: var(--color-black);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--color-white);
+  font-family: inherit;
+  font-size: var(--text-sm);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.feedback {
+  font-size: var(--text-sm);
+}
+
+.success {
+  color: var(--color-success);
+}
+
+.error {
+  color: var(--color-danger);
+}

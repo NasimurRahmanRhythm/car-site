@@ -11,13 +11,12 @@ export function CategoryStrip() {
         <SectionHeading eyebrow="Browse By" heading="Inventory Categories" />
 
         <div className={styles.grid}>
-          {CATEGORIES.map((category, index) => (
+          {CATEGORIES.map((category) => (
             <Link
               key={category.value}
               href={`/categories/${category.value}`}
               className={styles.tile}
             >
-              <span className={styles.index}>{String(index + 1).padStart(2, "0")}</span>
               <div>
                 <span className={styles.label}>{category.label}</span>
               </div>
