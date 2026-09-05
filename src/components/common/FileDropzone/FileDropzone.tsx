@@ -15,12 +15,15 @@ interface FileDropzoneProps {
   hint?: string;
   /** Existing image to show behind the prompt until a replacement is picked. */
   currentImageUrl?: string | null;
+  /** Widen the picker to video as well — the gallery takes both. */
+  accepts?: "image" | "media";
 }
 
 interface Picked {
   file: File;
   /** Object URL for the thumbnail — revoked as soon as the file is dropped. */
   url: string;
+  isVideo: boolean;
 }
 
 export function FileDropzone({
@@ -31,7 +34,9 @@ export function FileDropzone({
   label = "Add image",
   hint,
   currentImageUrl,
+  accepts = "image",
 }: FileDropzoneProps) {
+  const takesVideo = accepts === "media";
   const inputRef = useRef<HTMLInputElement>(null);
   const [picked, setPicked] = useState<Picked[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -61,6 +66,7 @@ export function FileDropzone({
     const next = nextFiles.map((file) => ({
       file,
       url: existing.get(file) ?? URL.createObjectURL(file),
+      isVideo: file.type.startsWith("video/"),
     }));
 
     picked
@@ -73,9 +79,12 @@ export function FileDropzone({
 
   function addFiles(incoming: FileList | null) {
     if (!incoming || incoming.length === 0) return;
-    const images = Array.from(incoming).filter((file) => file.type.startsWith("image/"));
-    if (images.length === 0) return;
-    commit(multiple ? [...picked.map((entry) => entry.file), ...images] : images.slice(0, 1));
+    const accepted = Array.from(incoming).filter(
+      (file) =>
+        file.type.startsWith("image/") || (takesVideo && file.type.startsWith("video/"))
+    );
+    if (accepted.length === 0) return;
+    commit(multiple ? [...picked.map((entry) => entry.file), ...accepted] : accepted.slice(0, 1));
   }
 
   const hasFiles = picked.length > 0;
@@ -101,7 +110,7 @@ export function FileDropzone({
           id={id}
           name={name}
           type="file"
-          accept="image/*"
+          accept={takesVideo ? "image/*,video/*" : "image/*"}
           multiple={multiple}
           required={required && !hasFiles}
           className={styles.input}
@@ -112,9 +121,13 @@ export function FileDropzone({
           <div className={styles.previewGrid}>
             {picked.map((entry, index) => (
               <div key={entry.url} className={styles.preview}>
-                {/* Blob URLs cannot go through the image optimiser. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={entry.url} alt="" className={styles.previewImage} />
+                {entry.isVideo ? (
+                  <video src={entry.url} className={styles.previewImage} muted playsInline />
+                ) : (
+                  /* Blob URLs cannot go through the image optimiser. */
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={entry.url} alt="" className={styles.previewImage} />
+                )}
                 <button
                   type="button"
                   className={styles.remove}
@@ -153,7 +166,7 @@ export function FileDropzone({
             </span>
             <span className={styles.label}>{showCurrent ? "Replace image" : label}</span>
             <span className={styles.dropHint}>
-              or drop {multiple ? "images" : "an image"} here
+              or drop {takesVideo ? "files" : multiple ? "images" : "an image"} here
             </span>
           </label>
         )}

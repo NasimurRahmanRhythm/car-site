@@ -2,6 +2,14 @@ export type CarStatus = "available" | "reserved" | "sold";
 
 export type AppointmentStatus = "pending" | "confirmed" | "cancelled";
 
+export type GalleryMediaType = "image" | "video";
+
+/** One figure in the About Us strip, stored as JSON on `about_content`. */
+export interface AboutStat {
+  value: string;
+  label: string;
+}
+
 export type CarCategory =
   | "upcoming_units"
   | "port_units"
@@ -271,6 +279,81 @@ export interface Database {
           preferred_time?: string | null;
           message?: string | null;
           status?: AppointmentStatus;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      about_content: {
+        Row: {
+          id: number;
+          eyebrow: string;
+          heading: string;
+          intro: string;
+          paragraphs: string[];
+          stats: AboutStat[];
+          image_url: string | null;
+          image_path: string | null;
+          image_alt: string | null;
+          image_width: number | null;
+          image_height: number | null;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          eyebrow?: string;
+          heading?: string;
+          intro?: string;
+          paragraphs?: string[];
+          stats?: AboutStat[];
+          image_url?: string | null;
+          image_path?: string | null;
+          image_alt?: string | null;
+          image_width?: number | null;
+          image_height?: number | null;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          eyebrow?: string;
+          heading?: string;
+          intro?: string;
+          paragraphs?: string[];
+          stats?: AboutStat[];
+          image_url?: string | null;
+          image_path?: string | null;
+          image_alt?: string | null;
+          image_width?: number | null;
+          image_height?: number | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      gallery_items: {
+        Row: {
+          id: string;
+          media_type: GalleryMediaType;
+          url: string;
+          storage_path: string;
+          caption: string | null;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          media_type?: GalleryMediaType;
+          url: string;
+          storage_path: string;
+          caption?: string | null;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          media_type?: GalleryMediaType;
+          url?: string;
+          storage_path?: string;
+          caption?: string | null;
+          sort_order?: number;
           created_at?: string;
         };
         Relationships: [];

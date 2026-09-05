@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SITE } from "@/data/site";
+import { richTextToPlainText } from "@/lib/rich-text";
 import { cn, excerpt, formatDate } from "@/lib/utils";
 import type { NewsPost } from "@/types/news";
 import styles from "./NewsCard.module.css";
@@ -41,7 +42,9 @@ export function NewsCard({
       <div className={styles.body}>
         <span className={styles.date}>{formatDate(post.published_at)}</span>
         <h3 className={styles.title}>{post.title}</h3>
-        {post.description && <p className={styles.excerpt}>{excerpt(post.description)}</p>}
+        {post.description && (
+          <p className={styles.excerpt}>{excerpt(richTextToPlainText(post.description))}</p>
+        )}
         <span className={styles.readMore}>Read More</span>
       </div>
     </Link>

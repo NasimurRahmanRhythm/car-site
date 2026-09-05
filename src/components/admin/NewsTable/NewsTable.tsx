@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { richTextToPlainText } from "@/lib/rich-text";
 import { excerpt, formatDate } from "@/lib/utils";
 import type { NewsPost } from "@/types/news";
 import { DeleteNewsButton } from "./DeleteNewsButton";
@@ -36,7 +37,7 @@ export function NewsTable({ posts }: { posts: NewsPost[] }) {
                   {post.title}
                 </Link>
                 {post.description && (
-                  <p className={styles.excerpt}>{excerpt(post.description, 90)}</p>
+                  <p className={styles.excerpt}>{excerpt(richTextToPlainText(post.description), 90)}</p>
                 )}
               </td>
               <td>{formatDate(post.published_at)}</td>

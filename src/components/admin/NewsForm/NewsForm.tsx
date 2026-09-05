@@ -1,4 +1,5 @@
 import { SubmitButton } from "@/components/common/SubmitButton";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { FileDropzone } from "@/components/common/FileDropzone";
 import type { NewsPost } from "@/types/news";
 import styles from "./NewsForm.module.css";
@@ -30,17 +31,15 @@ export function NewsForm({ post, action, submitLabel }: NewsFormProps) {
         </div>
 
         <div className={styles.field}>
-          <label className={styles.label} htmlFor="description">
-            Description
-          </label>
-          <textarea
-            id="description"
+          <span className={styles.label}>Body</span>
+          <RichTextEditor
             name="description"
-            rows={12}
-            defaultValue={post?.description ?? ""}
-            className={styles.textarea}
-            placeholder="Leave a blank line between paragraphs."
+            defaultValue={post?.description}
+            placeholder="Write the post. Use the toolbar to format it, add photos, or drop in a clip."
           />
+          <p className={styles.hint}>
+            The image and video buttons upload a file; Embed takes a YouTube or Vimeo link.
+          </p>
         </div>
 
         <div className={styles.field}>

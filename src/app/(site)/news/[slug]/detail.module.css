@@ -50,16 +50,6 @@
   object-fit: cover;
 }
 
-.body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  font-size: var(--text-lg);
-  line-height: 1.75;
-  color: var(--color-white-muted);
-  white-space: pre-line;
-}
-
 .more {
   margin-top: var(--space-10);
   padding-top: var(--space-8);

@@ -1,0 +1,229 @@
+/*
+ * The public side of the post editor. Quill leans on its own class names for
+ * alignment, indentation, font and size, so those are matched here with
+ * `:global` — the editor stylesheet itself is admin-only and never ships to a
+ * reader.
+ */
+
+.richText {
+  display: flow-root;
+  font-size: var(--text-lg);
+  line-height: 1.75;
+  color: var(--color-white-muted);
+}
+
+.richText > * {
+  margin-block: 0 var(--space-4);
+}
+
+.richText > *:last-child {
+  margin-bottom: 0;
+}
+
+.richText h1,
+.richText h2,
+.richText h3,
+.richText h4,
+.richText h5,
+.richText h6 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--color-white);
+  margin-top: var(--space-8);
+}
+
+.richText h1 {
+  font-size: var(--text-3xl);
+}
+
+.richText h2 {
+  font-size: var(--text-2xl);
+}
+
+.richText h3 {
+  font-size: var(--text-xl);
+}
+
+.richText h4,
+.richText h5,
+.richText h6 {
+  font-size: var(--text-lg);
+}
+
+.richText strong,
+.richText b {
+  color: var(--color-white);
+  font-weight: 600;
+}
+
+.richText a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* The global reset strips list markers site-wide; a post needs them back. */
+.richText ol,
+.richText ul {
+  padding-left: var(--space-6);
+  list-style-position: outside;
+}
+
+.richText ol {
+  list-style-type: decimal;
+}
+
+.richText ul {
+  list-style-type: disc;
+}
+
+.richText ol ol {
+  list-style-type: lower-alpha;
+}
+
+.richText ul ul {
+  list-style-type: circle;
+}
+
+.richText li {
+  margin-bottom: var(--space-2);
+}
+
+/* Quill's checklists come through as list items carrying their state. */
+.richText li[data-list="checked"],
+.richText li[data-list="unchecked"] {
+  list-style: none;
+}
+
+.richText li[data-list="checked"]::before {
+  content: "☑ ";
+}
+
+.richText li[data-list="unchecked"]::before {
+  content: "☐ ";
+}
+
+.richText blockquote {
+  border-left: 2px solid var(--color-accent);
+  padding-left: var(--space-5);
+  color: var(--color-white);
+  font-style: italic;
+}
+
+.richText pre {
+  padding: var(--space-4);
+  background: var(--color-black-soft);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  font-size: var(--text-sm);
+  white-space: pre-wrap;
+}
+
+.richText code {
+  font-size: 0.92em;
+}
+
+.richText hr {
+  border: none;
+  border-top: 1px solid var(--color-line);
+}
+
+.richText img,
+.richText video,
+.richText iframe {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+}
+
+.richText iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: none;
+}
+
+.richText table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.richText th,
+.richText td {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-line);
+  text-align: left;
+}
+
+/* --- Editor formatting classes --------------------------------------- */
+
+.richText :global(.ql-align-center) {
+  text-align: center;
+}
+
+.richText :global(.ql-align-right) {
+  text-align: right;
+}
+
+.richText :global(.ql-align-justify) {
+  text-align: justify;
+}
+
+.richText :global(.ql-direction-rtl) {
+  direction: rtl;
+  text-align: inherit;
+}
+
+.richText :global(.ql-font-serif) {
+  font-family: var(--font-display);
+}
+
+.richText :global(.ql-font-monospace) {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.richText :global(.ql-size-small) {
+  font-size: var(--text-sm);
+}
+
+.richText :global(.ql-size-large) {
+  font-size: var(--text-xl);
+}
+
+.richText :global(.ql-size-huge) {
+  font-size: var(--text-3xl);
+}
+
+.richText :global(.ql-indent-1) {
+  padding-left: 3em;
+}
+
+.richText :global(.ql-indent-2) {
+  padding-left: 6em;
+}
+
+.richText :global(.ql-indent-3) {
+  padding-left: 9em;
+}
+
+.richText :global(.ql-indent-4) {
+  padding-left: 12em;
+}
+
+.richText :global(.ql-indent-5) {
+  padding-left: 15em;
+}
+
+.richText :global(.ql-indent-6) {
+  padding-left: 18em;
+}
+
+.richText :global(.ql-indent-7) {
+  padding-left: 21em;
+}
+
+.richText :global(.ql-indent-8) {
+  padding-left: 24em;
+}

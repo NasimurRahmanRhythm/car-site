@@ -1,0 +1,153 @@
+/*
+ * Quill ships a light theme. Everything here re-points its own class names at
+ * the admin panel's dark palette — `:global` because Quill writes those class
+ * names itself and never sees the hashed module ones.
+ */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.toolbar,
+.editor {
+  background: var(--color-black);
+  border: 1px solid var(--color-line-strong);
+}
+
+.toolbar {
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  border-bottom: none;
+}
+
+.editor {
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  color: var(--color-white);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  min-height: 22rem;
+  resize: vertical;
+  overflow-y: auto;
+}
+
+.wrapper:focus-within .toolbar,
+.wrapper:focus-within .editor {
+  border-color: var(--color-accent);
+}
+
+/* --- Quill's own furniture ------------------------------------------- */
+
+.toolbar :global(.ql-stroke) {
+  stroke: var(--color-white-muted);
+}
+
+.toolbar :global(.ql-fill) {
+  fill: var(--color-white-muted);
+}
+
+.toolbar :global(.ql-picker),
+.toolbar :global(.ql-picker-label) {
+  color: var(--color-white-muted);
+}
+
+.toolbar :global(button:hover .ql-stroke),
+.toolbar :global(button:focus .ql-stroke),
+.toolbar :global(button.ql-active .ql-stroke),
+.toolbar :global(.ql-picker-label:hover .ql-stroke),
+.toolbar :global(.ql-picker-item:hover .ql-stroke),
+.toolbar :global(.ql-picker-label.ql-active .ql-stroke) {
+  stroke: var(--color-accent);
+}
+
+.toolbar :global(button:hover .ql-fill),
+.toolbar :global(button:focus .ql-fill),
+.toolbar :global(button.ql-active .ql-fill),
+.toolbar :global(.ql-picker-label:hover .ql-fill),
+.toolbar :global(.ql-picker-item:hover .ql-fill) {
+  fill: var(--color-accent);
+}
+
+.toolbar :global(button:hover),
+.toolbar :global(button.ql-active),
+.toolbar :global(.ql-picker-label:hover),
+.toolbar :global(.ql-picker-item:hover),
+.toolbar :global(.ql-picker-label.ql-active),
+.toolbar :global(.ql-picker-item.ql-selected) {
+  color: var(--color-accent);
+}
+
+/* The dropdown panel is absolutely positioned, so it needs its own ground. */
+.toolbar :global(.ql-picker-options) {
+  background: var(--color-black-soft);
+  border-color: var(--color-line-strong);
+}
+
+.toolbar :global(.ql-picker.ql-expanded .ql-picker-label) {
+  border-color: var(--color-line-strong);
+}
+
+/* The one custom button: a word, not an icon, so it gets sized like one. */
+.toolbar :global(.ql-embed) {
+  width: auto !important;
+  padding-inline: var(--space-2) !important;
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-white-muted);
+}
+
+.editor :global(.ql-editor) {
+  min-height: 20rem;
+  line-height: 1.7;
+  padding: var(--space-4);
+}
+
+.editor :global(.ql-editor.ql-blank::before) {
+  color: rgba(244, 244, 245, 0.35);
+  font-style: normal;
+  left: var(--space-4);
+  right: var(--space-4);
+}
+
+.editor :global(.ql-editor img),
+.editor :global(.ql-editor video),
+.editor :global(.ql-editor iframe) {
+  max-width: 100%;
+  border-radius: var(--radius-sm);
+}
+
+.editor :global(.ql-editor blockquote) {
+  border-left: 2px solid var(--color-accent);
+  padding-left: var(--space-4);
+  color: var(--color-white-muted);
+}
+
+.editor :global(.ql-editor pre.ql-syntax),
+.editor :global(.ql-editor pre) {
+  background: var(--color-black-soft);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  color: var(--color-white);
+}
+
+.editor :global(.ql-editor a) {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+/* --- Upload feedback -------------------------------------------------- */
+
+.busy,
+.error {
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+}
+
+.busy {
+  color: var(--color-white-muted);
+}
+
+.error {
+  color: var(--color-danger);
+}

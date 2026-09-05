@@ -4,7 +4,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/common/Container";
 import { NewsCard } from "@/components/common/NewsCard";
+import { RichText } from "@/components/common/RichText";
 import { getAllNews, getNewsBySlug } from "@/lib/services/news.service";
+import { richTextToPlainText } from "@/lib/rich-text";
 import { excerpt, formatDate } from "@/lib/utils";
 import styles from "./detail.module.css";
 
@@ -18,7 +20,9 @@ export async function generateMetadata({
 
   return {
     title: post.title,
-    description: post.description ? excerpt(post.description, 160) : undefined,
+    description: post.description
+      ? excerpt(richTextToPlainText(post.description), 160)
+      : undefined,
     openGraph: post.image_url ? { images: [post.image_url] } : undefined,
   };
 }
@@ -27,11 +31,6 @@ export default async function NewsDetailPage({ params }: PageProps<"/news/[slug]
   const { slug } = await params;
   const post = await getNewsBySlug(slug);
   if (!post) notFound();
-
-  const paragraphs = post.description
-    .split(/\n{2,}/)
-    .map((block) => block.trim())
-    .filter(Boolean);
 
   const others = (await getAllNews()).filter((item) => item.id !== post.id).slice(0, 3);
 
@@ -60,11 +59,7 @@ export default async function NewsDetailPage({ params }: PageProps<"/news/[slug]
           </div>
         )}
 
-        <div className={styles.body}>
-          {paragraphs.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
-        </div>
+        <RichText value={post.description} />
 
         {others.length > 0 && (
           <section className={styles.more}>
