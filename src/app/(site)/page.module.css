@@ -1,16 +1,31 @@
 /* One continuous backdrop shared by the category grid and the news strip, so
-   the image reads as a single panel instead of repeating per section. */
+   the artwork reads as a single panel instead of repeating per section.
+
+   Two artworks ship for this panel:
+     - category-backdrop-car.jpg      3:2,  a red coupe lit in a black studio
+     - category-backdrop-streaks.jpg  16:9, red light trails over dark carbon
+   The car one has a subject in the middle that `cover` crops hard on a narrow,
+   very tall viewport, so phones get the abstract one and wider screens get the
+   car. Swapping the two URLs below is all it takes to flip that preference. */
 .backdrop {
   position: relative;
   isolation: isolate;
-  background-image: url("/images/category-background.jpeg");
+  background-image: url("/images/category-backdrop-streaks.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
+@media (min-width: 768px) {
+  .backdrop {
+    background-image: url("/images/category-backdrop-car.jpg");
+  }
+}
+
 /* Darkening wash — the tiles and cards sit on top of it, and it keeps the
-   headings readable no matter which part of the photo lands behind them. */
+   headings readable no matter which part of the artwork lands behind them.
+   Both artworks are already near-black, so this is lighter than the wash the
+   old low-resolution photo needed. */
 .backdrop::before {
   content: "";
   position: absolute;
@@ -18,8 +33,8 @@
   z-index: -1;
   background: linear-gradient(
     180deg,
-    rgba(11, 11, 11, 0.94) 0%,
-    rgba(11, 11, 11, 0.72) 45%,
-    rgba(11, 11, 11, 0.94) 100%
+    rgba(11, 11, 11, 0.86) 0%,
+    rgba(11, 11, 11, 0.5) 45%,
+    rgba(11, 11, 11, 0.9) 100%
   );
 }
