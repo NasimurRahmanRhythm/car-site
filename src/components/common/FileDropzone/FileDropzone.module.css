@@ -13,6 +13,17 @@
     background-color var(--duration-fast) var(--ease-out);
 }
 
+/* Covers the zone while picked photos are being shrunk. */
+.processing {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  background: rgba(11, 11, 11, 0.6);
+}
+
 .zone:hover,
 .zone:focus-within {
   border-color: var(--color-accent);

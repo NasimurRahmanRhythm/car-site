@@ -115,7 +115,10 @@ export async function deleteScene(sceneId: string): Promise<{ error?: string }> 
     return { error: error.message };
   }
 
-  await supabase.storage.from(SHOWROOM_360_BUCKET).remove([scene.storage_path]);
+  const { error: storageError } = await supabase.storage
+    .from(SHOWROOM_360_BUCKET)
+    .remove([scene.storage_path]);
+  if (storageError) console.error("deleteScene storage cleanup failed:", storageError.message);
 
   // Deleting the entry point would leave the tour with nowhere to open, so the
   // next scene in order inherits the role.

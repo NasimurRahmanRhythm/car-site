@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Plus, X } from "lucide-react";
+import { Spinner } from "@/components/common/Spinner";
+import { compressImage } from "@/lib/media-compress";
 import { cn } from "@/lib/utils";
 import styles from "./FileDropzone.module.css";
 
@@ -15,6 +17,13 @@ interface FileDropzoneProps {
   hint?: string;
   /** Existing image to show behind the prompt until a replacement is picked. */
   currentImageUrl?: string | null;
+  /** Which media the zone takes. Defaults to images only. */
+  accept?: "image" | "video" | "image-video";
+  /**
+   * Downscale and re-encode photos as they are picked, so a form never sends
+   * full-size camera files — those used to overrun the request body limit.
+   */
+  compressImages?: boolean;
 }
 
 interface Picked {
@@ -31,10 +40,19 @@ export function FileDropzone({
   label = "Add image",
   hint,
   currentImageUrl,
+  accept = "image",
+  compressImages = false,
 }: FileDropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [picked, setPicked] = useState<Picked[]>([]);
   const [isDragging, setIsDragging] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const allowsImage = accept !== "video";
+  const allowsVideo = accept !== "image";
+  const noun = accept === "image-video" ? "file" : accept;
+  const mimeTypes = [allowsImage && "image/*", allowsVideo && "video/*"]
+    .filter(Boolean)
+    .join(",");
 
   // Object URLs outlive React state, so the live set is mirrored into a ref
   // and released when the component goes away.
@@ -71,11 +89,32 @@ export function FileDropzone({
     setPicked(next);
   }
 
-  function addFiles(incoming: FileList | null) {
+  async function addFiles(incoming: FileList | null) {
     if (!incoming || incoming.length === 0) return;
-    const images = Array.from(incoming).filter((file) => file.type.startsWith("image/"));
-    if (images.length === 0) return;
-    commit(multiple ? [...picked.map((entry) => entry.file), ...images] : images.slice(0, 1));
+    let media = Array.from(incoming).filter(
+      (file) =>
+        (allowsImage && file.type.startsWith("image/")) ||
+        (allowsVideo && file.type.startsWith("video/"))
+    );
+    if (media.length === 0) return;
+    if (!multiple) media = media.slice(0, 1);
+
+    // Snapshot before the await: `picked` must be the list as it was when
+    // these files arrived.
+    const kept = multiple ? picked.map((entry) => entry.file) : [];
+
+    if (compressImages) {
+      setIsProcessing(true);
+      try {
+        media = await Promise.all(
+          media.map((file) => (file.type.startsWith("image/") ? compressImage(file) : file))
+        );
+      } finally {
+        setIsProcessing(false);
+      }
+    }
+
+    commit([...kept, ...media]);
   }
 
   const hasFiles = picked.length > 0;
@@ -85,6 +124,7 @@ export function FileDropzone({
     <div className={styles.wrapper}>
       <div
         className={cn(styles.zone, isDragging && styles.dragging, hasFiles && styles.filled)}
+        aria-busy={isProcessing}
         onDragOver={(event) => {
           event.preventDefault();
           setIsDragging(true);
@@ -96,12 +136,18 @@ export function FileDropzone({
           addFiles(event.dataTransfer.files);
         }}
       >
+        {isProcessing && (
+          <span className={styles.processing}>
+            <Spinner />
+          </span>
+        )}
+
         <input
           ref={inputRef}
           id={id}
           name={name}
           type="file"
-          accept="image/*"
+          accept={mimeTypes}
           multiple={multiple}
           required={required && !hasFiles}
           className={styles.input}
@@ -112,9 +158,15 @@ export function FileDropzone({
           <div className={styles.previewGrid}>
             {picked.map((entry, index) => (
               <div key={entry.url} className={styles.preview}>
-                {/* Blob URLs cannot go through the image optimiser. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={entry.url} alt="" className={styles.previewImage} />
+                {entry.file.type.startsWith("video/") ? (
+                  <video src={entry.url} muted playsInline className={styles.previewImage} />
+                ) : (
+                  <>
+                    {/* Blob URLs cannot go through the image optimiser. */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={entry.url} alt="" className={styles.previewImage} />
+                  </>
+                )}
                 <button
                   type="button"
                   className={styles.remove}
@@ -132,7 +184,7 @@ export function FileDropzone({
 
             <label htmlFor={id} className={styles.addMore}>
               <Plus size={20} aria-hidden="true" />
-              <span className={styles.srOnly}>Add another image</span>
+              <span className={styles.srOnly}>Add another {noun}</span>
             </label>
           </div>
         ) : (
@@ -153,7 +205,7 @@ export function FileDropzone({
             </span>
             <span className={styles.label}>{showCurrent ? "Replace image" : label}</span>
             <span className={styles.dropHint}>
-              or drop {multiple ? "images" : "an image"} here
+              or drop {multiple ? `${noun}s` : noun === "image" ? "an image" : `a ${noun}`} here
             </span>
           </label>
         )}

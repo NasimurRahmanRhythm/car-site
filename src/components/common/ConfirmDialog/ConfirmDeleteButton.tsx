@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, type ReactNode } from "react";
 import { ConfirmDialog } from "./ConfirmDialog";
 
 interface ConfirmDeleteButtonProps {
-  label?: string;
-  pendingLabel?: string;
+  label?: ReactNode;
+  pendingLabel?: ReactNode;
+  /** Needed when `label` is an icon rather than text. */
+  ariaLabel?: string;
   title?: string;
   message: string;
   onConfirm: () => void | Promise<void>;
@@ -19,6 +21,7 @@ export function ConfirmDeleteButton({
   message,
   onConfirm,
   className = "admin-action admin-action-danger",
+  ariaLabel,
 }: ConfirmDeleteButtonProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -32,7 +35,13 @@ export function ConfirmDeleteButton({
 
   return (
     <>
-      <button type="button" className={className} onClick={() => setOpen(true)} disabled={isPending}>
+      <button
+        type="button"
+        className={className}
+        onClick={() => setOpen(true)}
+        disabled={isPending}
+        aria-label={ariaLabel}
+      >
         {isPending ? pendingLabel : label}
       </button>
       <ConfirmDialog

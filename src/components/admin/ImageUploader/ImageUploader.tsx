@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { deleteImageAction } from "@/app/actions/admin";
+import { TileDeleteButton } from "@/components/admin/TileDeleteButton";
 import { Badge } from "@/components/common/Badge";
 import { cn } from "@/lib/utils";
 import type { CarImage } from "@/types/car";
@@ -35,13 +37,12 @@ export function ImageUploader({ carId, images, error }: ImageUploaderProps) {
                   sizes="140px"
                   style={{ objectFit: "cover" }}
                 />
+                <TileDeleteButton
+                  title="Delete this photo?"
+                  onConfirm={deleteImageAction.bind(null, carId, image.id)}
+                />
               </div>
-              <ImageActions
-                carId={carId}
-                imageId={image.id}
-                storagePath={image.storage_path}
-                isCover={image.is_cover}
-              />
+              <ImageActions carId={carId} imageId={image.id} isCover={image.is_cover} />
             </div>
           ))}
         </div>

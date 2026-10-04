@@ -27,6 +27,24 @@
   transition: transform var(--duration-slow) var(--ease-out);
 }
 
+.play {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(11, 11, 11, 0.65);
+  color: var(--color-white);
+}
+
+.play svg {
+  margin-left: 2px;
+  fill: currentColor;
+}
+
 .card:hover .image {
   transform: scale(1.06);
 }

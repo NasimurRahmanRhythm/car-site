@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Play } from "lucide-react";
 import { SITE } from "@/data/site";
 import { cn, excerpt, formatDate } from "@/lib/utils";
 import type { NewsPost } from "@/types/news";
@@ -35,6 +36,11 @@ export function NewsCard({
           <div className={styles.placeholder}>
             <span className={styles.placeholderLabel}>{SITE.shortName}</span>
           </div>
+        )}
+        {post.video_url && (
+          <span className={styles.play} aria-label="Includes a video">
+            <Play size={18} aria-hidden="true" />
+          </span>
         )}
       </div>
 

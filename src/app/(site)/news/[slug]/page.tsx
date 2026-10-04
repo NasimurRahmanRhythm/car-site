@@ -47,7 +47,19 @@ export default async function NewsDetailPage({ params }: PageProps<"/news/[slug]
           <h1 className={styles.title}>{post.title}</h1>
         </header>
 
-        {post.image_url && (
+        {post.video_url && (
+          <video
+            src={post.video_url}
+            poster={post.image_url ?? undefined}
+            controls
+            playsInline
+            preload="metadata"
+            className={styles.video}
+          />
+        )}
+
+        {/* With a video, the cover image is already on screen as its poster. */}
+        {post.image_url && !post.video_url && (
           <div className={styles.imageWrap}>
             <Image
               src={post.image_url}

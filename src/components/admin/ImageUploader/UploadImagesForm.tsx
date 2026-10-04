@@ -21,6 +21,7 @@ export function UploadImagesForm({ carId }: { carId: string }) {
   return (
     <form action={formAction} className={styles.uploadForm}>
       <FileDropzone
+        compressImages
         key={dropzoneKey}
         id="car-images"
         name="files"

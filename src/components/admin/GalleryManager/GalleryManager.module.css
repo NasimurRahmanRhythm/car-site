@@ -1,0 +1,153 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.panels {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-6);
+  background: var(--color-black-soft);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+}
+
+.panelHeading {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-4);
+}
+
+.form > button {
+  align-self: flex-start;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.label {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-white-muted);
+}
+
+.input {
+  height: 2.75rem;
+  padding: 0 var(--space-3);
+  background: var(--color-black);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--color-white);
+  font-size: var(--text-sm);
+  font-family: inherit;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.hint {
+  font-size: var(--text-xs);
+  color: var(--color-white-muted);
+}
+
+.feedback {
+  font-size: var(--text-sm);
+}
+
+.success {
+  color: var(--color-success);
+}
+
+.error {
+  color: var(--color-danger);
+}
+
+.empty {
+  font-size: var(--text-sm);
+  color: var(--color-white-muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-4);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+}
+
+.media {
+  position: relative;
+}
+
+.thumb {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-black-elevated);
+}
+
+.thumb img,
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.playIcon {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(11, 11, 11, 0.7);
+  color: var(--color-white);
+}
+
+.kind {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+}
+
+.title {
+  color: var(--color-white-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+  .panels {
+    grid-template-columns: 3fr 2fr;
+    align-items: start;
+  }
+}

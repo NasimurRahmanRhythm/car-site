@@ -50,6 +50,14 @@
   object-fit: cover;
 }
 
+.video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md);
+  background: #000;
+}
+
 .body {
   display: flex;
   flex-direction: column;

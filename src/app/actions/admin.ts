@@ -175,13 +175,10 @@ export async function uploadImagesAction(
   };
 }
 
-export async function deleteImageAction(
-  carId: string,
-  imageId: string,
-  storagePath: string
-): Promise<void> {
-  await deleteCarImage(imageId, storagePath);
+export async function deleteImageAction(carId: string, imageId: string): Promise<void> {
+  await deleteCarImage(imageId);
   revalidateEverywhere(carId);
+  revalidatePath("/admin/gallery");
 }
 
 export async function setCoverImageAction(carId: string, imageId: string): Promise<void> {

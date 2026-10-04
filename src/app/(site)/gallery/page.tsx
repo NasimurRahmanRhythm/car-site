@@ -3,15 +3,16 @@ import { Container } from "@/components/common/Container";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { GalleryGrid } from "@/components/gallery/GalleryGrid";
 import { getGalleryImages } from "@/lib/services/car.service";
+import { getGalleryItems } from "@/lib/services/gallery.service";
 import styles from "./gallery.module.css";
 
 export const metadata: Metadata = {
   title: "Gallery",
-  description: "Photographs from across the current collection.",
+  description: "Photographs and videos from across the current collection.",
 };
 
 export default async function GalleryPage() {
-  const images = await getGalleryImages(60);
+  const [items, images] = await Promise.all([getGalleryItems(), getGalleryImages(60)]);
 
   return (
     <Container>
@@ -19,10 +20,10 @@ export default async function GalleryPage() {
         <SectionHeading
           eyebrow="The Collection"
           heading="Gallery"
-          description="A rotating look through the cars on our floor. Tap any photo to open the vehicle."
+          description="Photos and videos from our floor. Tap a vehicle photo to open the car, or a video to play it."
         />
 
-        <GalleryGrid images={images} />
+        <GalleryGrid items={items} images={images} />
       </div>
     </Container>
   );

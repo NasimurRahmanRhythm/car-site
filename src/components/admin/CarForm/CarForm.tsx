@@ -310,6 +310,7 @@ export function CarForm({ car, action, submitLabel }: CarFormProps) {
 
           <div className={`${styles.field} ${styles.wide}`}>
             <FileDropzone
+              compressImages
               id="car-images"
               name="files"
               multiple

@@ -1,0 +1,40 @@
+.button {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(11, 11, 11, 0.72);
+  color: var(--color-white);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.button:hover,
+.button:focus-visible {
+  background: var(--color-danger);
+}
+
+.button:disabled {
+  cursor: progress;
+}
+
+.pending {
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

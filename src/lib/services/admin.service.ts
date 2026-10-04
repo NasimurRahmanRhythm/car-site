@@ -9,6 +9,18 @@ export type CarUpdate = Database["public"]["Tables"]["cars"]["Update"];
 
 const CAR_IMAGES_BUCKET = "car-images";
 
+/**
+ * Removes files from a bucket, logging rather than throwing on failure — by
+ * the time this runs the database row is already gone, so there is nothing to
+ * roll back, but an orphaned file should at least leave a trace.
+ */
+async function removeFromStorage(bucket: string, paths: string[]): Promise<void> {
+  if (paths.length === 0) return;
+  const supabase = await createClient();
+  const { error } = await supabase.storage.from(bucket).remove(paths);
+  if (error) console.error(`Storage cleanup in "${bucket}" failed:`, error.message);
+}
+
 export async function getAllCarsForAdmin(): Promise<CarWithImages[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -107,18 +119,19 @@ export async function deleteCar(id: string): Promise<{ success: boolean; error?:
     .select("storage_path")
     .eq("car_id", id);
 
-  if (images && images.length > 0) {
-    await supabase.storage
-      .from(CAR_IMAGES_BUCKET)
-      .remove(images.map((img) => img.storage_path));
-  }
-
   const { error } = await supabase.from("cars").delete().eq("id", id);
 
   if (error) {
     console.error("deleteCar failed:", error.message);
     return { success: false, error: error.message };
   }
+
+  // Only once the row (and, by cascade, its image rows) is gone — otherwise a
+  // failed delete would leave the car pointing at files that no longer exist.
+  await removeFromStorage(
+    CAR_IMAGES_BUCKET,
+    (images ?? []).map((img) => img.storage_path)
+  );
 
   return { success: true };
 }
@@ -179,12 +192,20 @@ export async function uploadCarImage(
 }
 
 export async function deleteCarImage(
-  imageId: string,
-  storagePath: string
+  imageId: string
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient();
 
-  await supabase.storage.from(CAR_IMAGES_BUCKET).remove([storagePath]);
+  // The storage path is read from the row rather than taken from the caller,
+  // so a request can only ever delete the file that belongs to this image.
+  const { data: image } = await supabase
+    .from("car_images")
+    .select("car_id, storage_path, is_cover")
+    .eq("id", imageId)
+    .maybeSingle();
+
+  if (!image) return { success: false, error: "Image not found." };
+
   const { error } = await supabase.from("car_images").delete().eq("id", imageId);
 
   if (error) {
@@ -192,7 +213,50 @@ export async function deleteCarImage(
     return { success: false, error: error.message };
   }
 
+  await removeFromStorage(CAR_IMAGES_BUCKET, [image.storage_path]);
+
+  // Losing the cover would leave the car without a thumbnail, so the next
+  // photo in line takes over.
+  if (image.is_cover) {
+    const { data: next } = await supabase
+      .from("car_images")
+      .select("id")
+      .eq("car_id", image.car_id)
+      .order("sort_order", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+
+    if (next) await supabase.from("car_images").update({ is_cover: true }).eq("id", next.id);
+  }
+
   return { success: true };
+}
+
+export interface InventoryPhoto {
+  id: string;
+  url: string;
+  is_cover: boolean;
+  car: { id: string; year: number; make: string; model: string } | null;
+}
+
+/** Every photo attached to a vehicle, newest first, for the admin gallery. */
+export async function getInventoryPhotosForAdmin(): Promise<InventoryPhoto[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("car_images")
+    .select("id, url, is_cover, cars(id, year, make, model)")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("getInventoryPhotosForAdmin failed:", error.message);
+    return [];
+  }
+
+  const rows = (data ?? []) as unknown as (Omit<InventoryPhoto, "car"> & {
+    cars: InventoryPhoto["car"];
+  })[];
+
+  return rows.map(({ cars, ...photo }) => ({ ...photo, car: cars }));
 }
 
 export async function setCoverImage(
@@ -293,15 +357,29 @@ async function uploadNewsImage(file: File): Promise<NewsImageUpload> {
   return { url: publicUrl, path: storagePath };
 }
 
+/** Images and videos share the bucket, so this removes either. */
 async function removeNewsImage(storagePath: string | null): Promise<void> {
   if (!storagePath) return;
+  await removeFromStorage(NEWS_IMAGES_BUCKET, [storagePath]);
+}
+
+/**
+ * The row fields for a video the admin's browser already put in the bucket.
+ * Only the path comes from the client; the URL is derived here.
+ */
+async function newsVideoFields(
+  videoPath: string
+): Promise<Pick<NewsInput, "video_url" | "video_path">> {
   const supabase = await createClient();
-  await supabase.storage.from(NEWS_IMAGES_BUCKET).remove([storagePath]);
+  const { data } = supabase.storage.from(NEWS_IMAGES_BUCKET).getPublicUrl(videoPath);
+  return { video_url: data.publicUrl, video_path: videoPath };
 }
 
 export async function createNews(
   input: Omit<NewsInput, "slug">,
-  image?: File | null
+  image?: File | null,
+  /** Storage path of a video already uploaded from the browser. */
+  videoPath?: string | null
 ): Promise<{ post: NewsPost | null; error?: string }> {
   const supabase = await createClient();
   const slug = await uniqueNewsSlug(input.title);
@@ -309,19 +387,25 @@ export async function createNews(
   let imageFields: Pick<NewsInput, "image_url" | "image_path"> = {};
   if (image) {
     const uploaded = await uploadNewsImage(image);
-    if (!uploaded.url) return { post: null, error: uploaded.error };
+    if (!uploaded.url) {
+      await removeNewsImage(videoPath ?? null);
+      return { post: null, error: uploaded.error };
+    }
     imageFields = { image_url: uploaded.url, image_path: uploaded.path };
   }
 
+  const videoFields = videoPath ? await newsVideoFields(videoPath) : {};
+
   const { data, error } = await supabase
     .from("news")
-    .insert({ ...input, ...imageFields, slug })
+    .insert({ ...input, ...imageFields, ...videoFields, slug })
     .select()
     .single();
 
   if (error) {
     console.error("createNews failed:", error.message);
     await removeNewsImage(imageFields.image_path ?? null);
+    await removeNewsImage(videoPath ?? null);
     return { post: null, error: error.message };
   }
 
@@ -331,24 +415,44 @@ export async function createNews(
 export async function updateNews(
   id: string,
   input: Omit<NewsInput, "slug">,
-  image?: File | null
+  image?: File | null,
+  /** Drop the current image without replacing it. Ignored when `image` is set. */
+  removeImage = false,
+  /** Storage path of a replacement video already uploaded from the browser. */
+  videoPath?: string | null,
+  /** Drop the current video without replacing it. Ignored when `videoPath` is set. */
+  removeVideo = false
 ): Promise<{ post: NewsPost | null; error?: string }> {
   const supabase = await createClient();
   const existing = await getNewsForAdmin(id);
-  if (!existing) return { post: null, error: "Post not found." };
+  if (!existing) {
+    await removeNewsImage(videoPath ?? null);
+    return { post: null, error: "Post not found." };
+  }
 
   const slug = await uniqueNewsSlug(input.title, id);
 
   let imageFields: Pick<NewsInput, "image_url" | "image_path"> = {};
   if (image) {
     const uploaded = await uploadNewsImage(image);
-    if (!uploaded.url) return { post: null, error: uploaded.error };
+    if (!uploaded.url) {
+      await removeNewsImage(videoPath ?? null);
+      return { post: null, error: uploaded.error };
+    }
     imageFields = { image_url: uploaded.url, image_path: uploaded.path };
+  } else if (removeImage) {
+    imageFields = { image_url: null, image_path: null };
   }
+  const replacesImage = Boolean(image) || removeImage;
+
+  let videoFields: Pick<NewsInput, "video_url" | "video_path"> = {};
+  if (videoPath) videoFields = await newsVideoFields(videoPath);
+  else if (removeVideo) videoFields = { video_url: null, video_path: null };
+  const replacesVideo = Boolean(videoPath) || removeVideo;
 
   const { data, error } = await supabase
     .from("news")
-    .update({ ...input, ...imageFields, slug })
+    .update({ ...input, ...imageFields, ...videoFields, slug })
     .eq("id", id)
     .select()
     .single();
@@ -356,11 +460,13 @@ export async function updateNews(
   if (error) {
     console.error("updateNews failed:", error.message);
     await removeNewsImage(imageFields.image_path ?? null);
+    await removeNewsImage(videoPath ?? null);
     return { post: null, error: error.message };
   }
 
   // Only drop the old file once the row is safely pointing at the new one.
-  if (image) await removeNewsImage(existing.image_path);
+  if (replacesImage) await removeNewsImage(existing.image_path);
+  if (replacesVideo) await removeNewsImage(existing.video_path);
 
   return { post: data };
 }
@@ -377,5 +483,6 @@ export async function deleteNews(id: string): Promise<{ success: boolean; error?
   }
 
   await removeNewsImage(existing?.image_path ?? null);
+  await removeNewsImage(existing?.video_path ?? null);
   return { success: true };
 }

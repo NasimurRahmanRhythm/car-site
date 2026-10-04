@@ -9,6 +9,8 @@ export type CarCategory =
   | "exchange_offers"
   | "pre_orders";
 
+export type GalleryItemKind = "image" | "video" | "youtube";
+
 export interface Database {
   public: {
     Tables: {
@@ -167,6 +169,45 @@ export interface Database {
           },
         ];
       };
+      gallery_items: {
+        Row: {
+          id: string;
+          kind: GalleryItemKind;
+          url: string;
+          storage_path: string | null;
+          thumbnail_url: string | null;
+          thumbnail_path: string | null;
+          youtube_id: string | null;
+          title: string | null;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          kind: GalleryItemKind;
+          url: string;
+          storage_path?: string | null;
+          thumbnail_url?: string | null;
+          thumbnail_path?: string | null;
+          youtube_id?: string | null;
+          title?: string | null;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          kind?: GalleryItemKind;
+          url?: string;
+          storage_path?: string | null;
+          thumbnail_url?: string | null;
+          thumbnail_path?: string | null;
+          youtube_id?: string | null;
+          title?: string | null;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       news: {
         Row: {
           id: string;
@@ -175,6 +216,8 @@ export interface Database {
           description: string;
           image_url: string | null;
           image_path: string | null;
+          video_url: string | null;
+          video_path: string | null;
           published_at: string;
           created_at: string;
           updated_at: string;
@@ -186,6 +229,8 @@ export interface Database {
           description?: string;
           image_url?: string | null;
           image_path?: string | null;
+          video_url?: string | null;
+          video_path?: string | null;
           published_at?: string;
           created_at?: string;
           updated_at?: string;
@@ -197,6 +242,8 @@ export interface Database {
           description?: string;
           image_url?: string | null;
           image_path?: string | null;
+          video_url?: string | null;
+          video_path?: string | null;
           published_at?: string;
           created_at?: string;
           updated_at?: string;
