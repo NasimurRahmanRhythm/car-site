@@ -155,7 +155,9 @@
   background: currentColor;
 }
 
-@media (min-width: 1200px) {
+/* Nine uppercase links plus the logo and the compare button need more room
+   than 1200px leaves; below this the hamburger and MobileMenu take over. */
+@media (min-width: 1320px) {
   .links {
     display: flex;
   }

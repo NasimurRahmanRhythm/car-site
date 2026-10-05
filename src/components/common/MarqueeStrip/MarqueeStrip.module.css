@@ -8,6 +8,9 @@
 .track {
   display: inline-flex;
   align-items: center;
+  /* Without this the track is capped at the strip's width and its flex items
+     are squeezed to fit — which collapsed every wordmark to zero width. */
+  width: max-content;
   will-change: transform;
 }
 
@@ -16,6 +19,7 @@
 .item {
   display: inline-flex;
   align-items: center;
+  flex-shrink: 0;
   margin-right: var(--space-8);
   opacity: 0.7;
 }

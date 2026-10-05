@@ -30,6 +30,7 @@ interface Picked {
   file: File;
   /** Object URL for the thumbnail — revoked as soon as the file is dropped. */
   url: string;
+  isVideo: boolean;
 }
 
 export function FileDropzone({
@@ -79,6 +80,7 @@ export function FileDropzone({
     const next = nextFiles.map((file) => ({
       file,
       url: existing.get(file) ?? URL.createObjectURL(file),
+      isVideo: file.type.startsWith("video/"),
     }));
 
     picked
@@ -158,7 +160,7 @@ export function FileDropzone({
           <div className={styles.previewGrid}>
             {picked.map((entry, index) => (
               <div key={entry.url} className={styles.preview}>
-                {entry.file.type.startsWith("video/") ? (
+                {entry.isVideo ? (
                   <video src={entry.url} muted playsInline className={styles.previewImage} />
                 ) : (
                   <>

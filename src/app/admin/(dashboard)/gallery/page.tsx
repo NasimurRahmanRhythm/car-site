@@ -5,7 +5,7 @@ import { getGalleryItems } from "@/lib/services/gallery.service";
 import styles from "../admin.module.css";
 
 export const metadata: Metadata = {
-  title: "Gallery",
+  title: "Manage Gallery",
 };
 
 export default async function AdminGalleryPage() {

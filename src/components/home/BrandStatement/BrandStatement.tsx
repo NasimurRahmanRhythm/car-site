@@ -3,30 +3,31 @@ import { Container } from "@/components/common/Container";
 import { RevealText } from "@/components/common/RevealText";
 import { RevealBlock } from "@/components/common/RevealBlock";
 import { CountUp } from "@/components/common/CountUp";
-import { ABOUT } from "@/data/about";
+import { splitHeadingLines } from "@/lib/utils";
+import type { AboutContent } from "@/types/about";
 import styles from "./BrandStatement.module.css";
 
-export function BrandStatement() {
+export function BrandStatement({ about }: { about: AboutContent }) {
   return (
     <section className={styles.section}>
       <Container>
         <div className={styles.layout}>
           <div className={styles.text}>
             <div>
-              <span className="eyebrow">{ABOUT.eyebrow}</span>
+              <span className="eyebrow">{about.eyebrow}</span>
               <RevealText
                 as="h2"
-                lines={["A House Built", "on Rare Machines"]}
+                lines={splitHeadingLines(about.heading)}
                 className={`display-2 ${styles.heading}`}
               />
             </div>
 
             <RevealBlock>
               <div className={styles.copy}>
-                <p className="body-lg">{ABOUT.intro}</p>
+                <p className="body-lg">{about.intro}</p>
 
                 <div className={styles.stats}>
-                  {ABOUT.stats.map((stat) => (
+                  {about.stats.map((stat) => (
                     <div key={stat.label}>
                       <div className={styles.statValue}>
                         <CountUp value={stat.value} />
@@ -42,10 +43,10 @@ export function BrandStatement() {
           <RevealBlock>
             <figure className={styles.portrait}>
               <Image
-                src={ABOUT.showroom.src}
-                alt={ABOUT.showroom.alt}
-                width={ABOUT.showroom.width}
-                height={ABOUT.showroom.height}
+                src={about.showroom.src}
+                alt={about.showroom.alt}
+                width={about.showroom.width}
+                height={about.showroom.height}
                 sizes="(min-width: 448px) 448px, 100vw"
                 className={styles.portraitImage}
               />

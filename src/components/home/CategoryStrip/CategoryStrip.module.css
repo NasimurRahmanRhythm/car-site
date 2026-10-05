@@ -32,12 +32,6 @@
   color: var(--color-accent);
 }
 
-.index {
-  font-family: var(--font-display);
-  font-size: var(--text-sm);
-  color: var(--color-white-muted);
-}
-
 .label {
   font-family: var(--font-display);
   font-size: var(--text-xl);

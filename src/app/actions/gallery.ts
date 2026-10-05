@@ -5,6 +5,7 @@ import {
   addGalleryMedia,
   addGalleryYoutube,
   deleteGalleryItem,
+  updateGalleryCaption,
 } from "@/lib/services/gallery.service";
 import { parseYoutubeId } from "@/lib/youtube";
 
@@ -74,6 +75,11 @@ export async function addYoutubeLinkAction(
 
   revalidateGallery();
   return { success: true, completedAt: Date.now() };
+}
+
+export async function updateGalleryCaptionAction(id: string, formData: FormData): Promise<void> {
+  await updateGalleryCaption(id, String(formData.get("caption") ?? "").trim() || null);
+  revalidateGallery();
 }
 
 export async function deleteGalleryItemAction(id: string): Promise<void> {

@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/components/common/Container";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { GalleryGrid } from "@/components/gallery/GalleryGrid";
-import { getGalleryImages } from "@/lib/services/car.service";
-import { getGalleryItems } from "@/lib/services/gallery.service";
+import { getGalleryEntries } from "@/lib/services/gallery.service";
 import styles from "./gallery.module.css";
 
 export const metadata: Metadata = {
@@ -12,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function GalleryPage() {
-  const [items, images] = await Promise.all([getGalleryItems(), getGalleryImages(60)]);
+  const entries = await getGalleryEntries(60);
 
   return (
     <Container>
@@ -23,7 +22,7 @@ export default async function GalleryPage() {
           description="Photos and videos from our floor. Tap a vehicle photo to open the car, or a video to play it."
         />
 
-        <GalleryGrid items={items} images={images} />
+        <GalleryGrid entries={entries} />
       </div>
     </Container>
   );

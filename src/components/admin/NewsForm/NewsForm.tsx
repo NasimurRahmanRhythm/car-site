@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition, type FormEvent } from "react";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { Button } from "@/components/common/Button";
 import { FileDropzone } from "@/components/common/FileDropzone";
 import { Spinner } from "@/components/common/Spinner";
@@ -110,17 +111,15 @@ export function NewsForm({ post, action, submitLabel }: NewsFormProps) {
         </div>
 
         <div className={styles.field}>
-          <label className={styles.label} htmlFor="description">
-            Description
-          </label>
-          <textarea
-            id="description"
+          <span className={styles.label}>Body</span>
+          <RichTextEditor
             name="description"
-            rows={12}
-            defaultValue={post?.description ?? ""}
-            className={styles.textarea}
-            placeholder="Leave a blank line between paragraphs."
+            defaultValue={post?.description}
+            placeholder="Write the post. Use the toolbar to format it, add photos, or drop in a clip."
           />
+          <p className={styles.hint}>
+            The image and video buttons upload a file; Embed takes a YouTube or Vimeo link.
+          </p>
         </div>
 
         <div className={styles.field}>

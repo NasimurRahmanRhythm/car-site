@@ -82,3 +82,28 @@ export function excerpt(value: string, maxLength = 140): string {
   const lastSpace = clipped.lastIndexOf(" ");
   return `${clipped.slice(0, lastSpace > 0 ? lastSpace : maxLength)}…`;
 }
+
+/**
+ * Splits a heading into two lines of roughly equal length, for the reveal
+ * animation that plays one line at a time. The break lands on the word
+ * boundary closest to the middle, so an edited heading stacks as evenly as the
+ * hand-written one it replaced.
+ */
+export function splitHeadingLines(heading: string): string[] {
+  const words = heading.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 2) return words.length > 0 ? words : [heading];
+
+  const target = heading.trim().length / 2;
+  let best = 1;
+  let bestGap = Infinity;
+
+  for (let breakAt = 1; breakAt < words.length; breakAt += 1) {
+    const gap = Math.abs(words.slice(0, breakAt).join(" ").length - target);
+    if (gap < bestGap) {
+      bestGap = gap;
+      best = breakAt;
+    }
+  }
+
+  return [words.slice(0, best).join(" "), words.slice(best).join(" ")];
+}

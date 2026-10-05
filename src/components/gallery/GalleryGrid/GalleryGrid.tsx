@@ -1,72 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Play } from "lucide-react";
-import { carDisplayName } from "@/lib/utils";
-import type { GalleryImage } from "@/lib/services/car.service";
-import type { GalleryItem } from "@/types/gallery";
+import type { GalleryEntry } from "@/types/gallery";
 import { VideoTile } from "./VideoTile";
 import styles from "./GalleryGrid.module.css";
 
 const SIZES = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw";
 
-interface GalleryGridProps {
-  /** Photos, videos and YouTube links added on the admin Gallery page. */
-  items?: GalleryItem[];
-  /** Photos attached to vehicles in the collection. */
-  images: GalleryImage[];
-}
-
-function MediaTile({ item, priority }: { item: GalleryItem; priority: boolean }) {
-  if (item.kind === "video") {
-    return (
-      <VideoTile url={item.url} poster={item.thumbnail_url} title={item.title} sizes={SIZES} />
-    );
-  }
-
-  if (item.kind === "youtube") {
-    return (
-      <a
-        href={item.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={styles.tile}
-        aria-label={item.title ? `Watch on YouTube: ${item.title}` : "Watch on YouTube"}
-      >
-        {item.thumbnail_url && (
-          <Image
-            src={item.thumbnail_url}
-            alt=""
-            fill
-            sizes={SIZES}
-            className={styles.image}
-            priority={priority}
-          />
-        )}
-        <span className={`${styles.play} ${styles.youtube}`} aria-hidden="true">
-          <Play size={22} />
-        </span>
-        {item.title && <span className={styles.caption}>{item.title}</span>}
-      </a>
-    );
-  }
-
-  return (
-    <div className={styles.tile}>
-      <Image
-        src={item.url}
-        alt={item.title ?? "Showroom photograph"}
-        fill
-        sizes={SIZES}
-        className={styles.image}
-        priority={priority}
-      />
-      {item.title && <span className={styles.caption}>{item.title}</span>}
-    </div>
-  );
-}
-
-export function GalleryGrid({ items = [], images }: GalleryGridProps) {
-  if (items.length === 0 && images.length === 0) {
+export function GalleryGrid({ entries }: { entries: GalleryEntry[] }) {
+  if (entries.length === 0) {
     return (
       <p className={styles.empty}>
         No photos yet — they arrive as vehicles are added to the collection.
@@ -76,33 +18,69 @@ export function GalleryGrid({ items = [], images }: GalleryGridProps) {
 
   return (
     <div className={styles.grid}>
-      {items.map((item, index) => (
-        <MediaTile key={item.id} item={item} priority={index < 4} />
-      ))}
+      {entries.map((entry, index) => {
+        // A clip plays in its own lightbox, so it is never wrapped in a link —
+        // tapping play would otherwise navigate away instead.
+        if (entry.kind === "video") {
+          return (
+            <VideoTile
+              key={entry.id}
+              url={entry.url}
+              poster={entry.poster}
+              title={entry.caption}
+              sizes={SIZES}
+            />
+          );
+        }
 
-      {images.map((image, index) => {
-        const name = image.car ? carDisplayName(image.car) : null;
+        if (entry.kind === "youtube") {
+          return (
+            <a
+              key={entry.id}
+              href={entry.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.tile}
+              aria-label={entry.caption ? `Watch on YouTube: ${entry.caption}` : "Watch on YouTube"}
+            >
+              {entry.poster && (
+                <Image
+                  src={entry.poster}
+                  alt=""
+                  fill
+                  sizes={SIZES}
+                  className={styles.image}
+                  priority={index < 4}
+                />
+              )}
+              <span className={`${styles.play} ${styles.youtube}`} aria-hidden="true">
+                <Play size={22} />
+              </span>
+              {entry.caption && <span className={styles.caption}>{entry.caption}</span>}
+            </a>
+          );
+        }
 
         const tile = (
           <>
             <Image
-              src={image.url}
-              alt={image.alt ?? name ?? "Vehicle photograph"}
+              src={entry.url}
+              alt={entry.alt}
               fill
               sizes={SIZES}
               className={styles.image}
-              priority={items.length + index < 4}
+              priority={index < 4}
             />
-            {name && <span className={styles.caption}>{name}</span>}
+            {entry.caption && <span className={styles.caption}>{entry.caption}</span>}
           </>
         );
 
-        return image.car ? (
-          <Link key={image.id} href={`/inventory/${image.car.slug}`} className={styles.tile}>
+        return entry.href ? (
+          <Link key={entry.id} href={entry.href} className={styles.tile}>
             {tile}
           </Link>
         ) : (
-          <div key={image.id} className={styles.tile}>
+          <div key={entry.id} className={styles.tile}>
             {tile}
           </div>
         );

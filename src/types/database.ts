@@ -2,6 +2,12 @@ export type CarStatus = "available" | "reserved" | "sold";
 
 export type AppointmentStatus = "pending" | "confirmed" | "cancelled";
 
+/** One figure in the About Us strip, stored as JSON on `about_content`. */
+export interface AboutStat {
+  value: string;
+  label: string;
+}
+
 export type CarCategory =
   | "upcoming_units"
   | "port_units"
@@ -319,6 +325,51 @@ export interface Database {
           message?: string | null;
           status?: AppointmentStatus;
           created_at?: string;
+        };
+        Relationships: [];
+      };
+      about_content: {
+        Row: {
+          id: number;
+          eyebrow: string;
+          heading: string;
+          intro: string;
+          paragraphs: string[];
+          stats: AboutStat[];
+          image_url: string | null;
+          image_path: string | null;
+          image_alt: string | null;
+          image_width: number | null;
+          image_height: number | null;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          eyebrow?: string;
+          heading?: string;
+          intro?: string;
+          paragraphs?: string[];
+          stats?: AboutStat[];
+          image_url?: string | null;
+          image_path?: string | null;
+          image_alt?: string | null;
+          image_width?: number | null;
+          image_height?: number | null;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          eyebrow?: string;
+          heading?: string;
+          intro?: string;
+          paragraphs?: string[];
+          stats?: AboutStat[];
+          image_url?: string | null;
+          image_path?: string | null;
+          image_alt?: string | null;
+          image_width?: number | null;
+          image_height?: number | null;
+          updated_at?: string;
         };
         Relationships: [];
       };

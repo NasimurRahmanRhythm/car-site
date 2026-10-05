@@ -153,14 +153,20 @@ export function GalleryUploadForm() {
 
       <label className={styles.field}>
         <span className={styles.label}>Caption (optional)</span>
-        <input name="title" type="text" maxLength={120} className={styles.input} />
+        <input
+          name="title"
+          type="text"
+          maxLength={120}
+          className={styles.input}
+          placeholder="Shown over the tile on hover."
+        />
       </label>
 
       {done && <p className={`${styles.feedback} ${styles.success}`}>{done}</p>}
       {error && <p className={`${styles.feedback} ${styles.error}`}>{error}</p>}
 
       <Button type="submit" disabled={busy} aria-busy={busy}>
-        {busy ? <Spinner /> : "Upload"}
+        {busy ? <Spinner /> : "Upload to Gallery"}
       </Button>
     </form>
   );

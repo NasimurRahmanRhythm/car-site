@@ -27,6 +27,9 @@ export async function AdminNav() {
         <Link href="/admin/gallery" className={styles.link}>
           Gallery
         </Link>
+        <Link href="/admin/about" className={styles.link}>
+          About Us
+        </Link>
         <Link href="/admin/360-view" className={styles.link}>
           360&deg; View
         </Link>

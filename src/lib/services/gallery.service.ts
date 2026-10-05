@@ -1,9 +1,17 @@
 import { createClient } from "@/lib/supabase/server";
+import { getGalleryImages } from "@/lib/services/car.service";
+import { carDisplayName } from "@/lib/utils";
 import { youtubeThumbnailUrl, youtubeWatchUrl } from "@/lib/youtube";
-import type { GalleryItem } from "@/types/gallery";
+import type { GalleryEntry, GalleryItem } from "@/types/gallery";
 
 export const GALLERY_BUCKET = "gallery";
 
+/** Where the gallery first kept its files — rows from then still point there. */
+const LEGACY_GALLERY_BUCKET = "gallery-media";
+
+type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
+
+/** Uploaded gallery media, newest first within the manual ordering. */
 export async function getGalleryItems(): Promise<GalleryItem[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -18,6 +26,60 @@ export async function getGalleryItems(): Promise<GalleryItem[]> {
   }
 
   return data ?? [];
+}
+
+/**
+ * Everything the gallery page shows: the media added to the gallery itself,
+ * then the shuffled pool of vehicle photos behind it.
+ *
+ * Gallery media leads because it is the deliberate choice — a vehicle photo
+ * ends up here as a side effect of listing the car.
+ */
+export async function getGalleryEntries(carImageLimit = 60): Promise<GalleryEntry[]> {
+  const [items, carImages] = await Promise.all([
+    getGalleryItems(),
+    getGalleryImages(carImageLimit),
+  ]);
+
+  const uploaded: GalleryEntry[] = items.map((item) => ({
+    id: item.id,
+    kind: item.kind,
+    url: item.url,
+    poster: item.thumbnail_url,
+    caption: item.title,
+    alt: item.title ?? "VIP Motors gallery",
+    href: null,
+  }));
+
+  const fromInventory: GalleryEntry[] = carImages.map((image) => {
+    const name = image.car ? carDisplayName(image.car) : null;
+    return {
+      id: image.id,
+      kind: "image" as const,
+      url: image.url,
+      poster: null,
+      caption: name,
+      alt: image.alt ?? name ?? "Vehicle photograph",
+      href: image.car ? `/inventory/${image.car.slug}` : null,
+    };
+  });
+
+  return [...uploaded, ...fromInventory];
+}
+
+/**
+ * New media goes to the front of the gallery, which is where an admin who
+ * just added it expects to find it.
+ */
+async function frontSortOrder(supabase: SupabaseServerClient): Promise<number> {
+  const { data: first } = await supabase
+    .from("gallery_items")
+    .select("sort_order")
+    .order("sort_order", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  return (first?.sort_order ?? 0) - 1;
 }
 
 /**
@@ -46,6 +108,7 @@ export async function addGalleryMedia(input: {
     thumbnail_url: thumbnailUrl,
     thumbnail_path: input.thumbnailPath ?? null,
     title: input.title ?? null,
+    sort_order: await frontSortOrder(supabase),
   });
 
   if (error) {
@@ -72,10 +135,26 @@ export async function addGalleryYoutube(
     youtube_id: youtubeId,
     thumbnail_url: youtubeThumbnailUrl(youtubeId),
     title,
+    sort_order: await frontSortOrder(supabase),
   });
 
   if (error) {
     console.error("addGalleryYoutube failed:", error.message);
+    return { error: error.message };
+  }
+
+  return {};
+}
+
+export async function updateGalleryCaption(
+  id: string,
+  caption: string | null
+): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { error } = await supabase.from("gallery_items").update({ title: caption }).eq("id", id);
+
+  if (error) {
+    console.error("updateGalleryCaption failed:", error.message);
     return { error: error.message };
   }
 
@@ -87,7 +166,7 @@ export async function deleteGalleryItem(id: string): Promise<{ error?: string }>
 
   const { data: item } = await supabase
     .from("gallery_items")
-    .select("storage_path, thumbnail_path")
+    .select("url, storage_path, thumbnail_path")
     .eq("id", id)
     .maybeSingle();
 
@@ -101,8 +180,11 @@ export async function deleteGalleryItem(id: string): Promise<{ error?: string }>
   const paths = [item?.storage_path, item?.thumbnail_path].filter(
     (path): path is string => Boolean(path)
   );
-  if (paths.length > 0) {
-    const { error: storageError } = await supabase.storage.from(GALLERY_BUCKET).remove(paths);
+  if (item && paths.length > 0) {
+    const bucket = item.url.includes(`/${LEGACY_GALLERY_BUCKET}/`)
+      ? LEGACY_GALLERY_BUCKET
+      : GALLERY_BUCKET;
+    const { error: storageError } = await supabase.storage.from(bucket).remove(paths);
     if (storageError) {
       console.error("deleteGalleryItem storage cleanup failed:", storageError.message);
     }

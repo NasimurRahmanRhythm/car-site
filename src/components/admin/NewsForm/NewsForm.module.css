@@ -92,3 +92,9 @@
   font-size: var(--text-sm);
   color: var(--color-danger);
 }
+
+.hint {
+  font-size: var(--text-xs);
+  color: var(--color-white-muted);
+  line-height: 1.5;
+}
